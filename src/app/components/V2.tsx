@@ -34,7 +34,7 @@ const Live2D = () => {
   }
 
   return (
-    <div className="mt-[-300px] md:mt-[-200px] ml-[-150px] md:mx-auto">
+    <div className="mt-[-300px] md:mt-[-200px] ml-[-150px] my-auto md:mx-auto">
       <canvas id="live2d" width="800" height="1600"></canvas>
     </div>
   );

@@ -4,11 +4,14 @@ import { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import dynamic from 'next/dynamic'
 import Live2D from "./components/V2";
+import { neonColors, waifuNames } from "./data/random";
 
 
 export default function Home() {
 
-  const socket = io("waifuainode-production.up.railway.app");
+  const prod = "https://waifuainode-production.up.railway.app/" //"http://localhost:3001"
+
+  const socket = io(prod);
 
   const [messages, setMessages] = useState<any[]>([])
   const [newMessage, setNewMessage] = useState("")
@@ -37,6 +40,7 @@ export default function Home() {
 
     socket.on("message", (msg) => {
       console.log(messages)
+      console.log("msg: ", msg)
       setMessages((prev: any[]) => [...(prev || []), msg])
     });
 
@@ -53,8 +57,11 @@ export default function Home() {
     console.log(amountOfCharacters.length)
     if (amountOfCharacters.length < 100) {
       if (event.key == "Enter" || event.type == "click") {
+        const waifuNumber = Math.floor(Math.random() * 50)
+        const colorNumber = Math.floor(Math.random() * 10)
         setThinking(true)
-        socket.emit("message", { text: newMessage, timestamp: Date.now() })
+        socket.emit("message", { text: newMessage, timestamp: Date.now(), name: waifuNames[waifuNumber], color: neonColors[colorNumber] })
+        console.log(neonColors[colorNumber])
         async function audio() {
           const response = await fetch("/api/sendtoai", {
             method: "POST",
@@ -102,7 +109,7 @@ export default function Home() {
         <div className="overflow-scroll h-[100%] md:h-[95%] w-full px-0 md:px-4" ref={containerRef} style={{flexDirection: 'column'}}>
           <div className={`${messages ? "hidden" : "visible text-black mx-auto my-auto"}`}>Loading...</div>
           {messages?.map((e:any) => 
-            <div className="flex w-full px-4 py-2 m-0 md:m-1 rounded-lg border-[2px] border-black mx-auto break-all overflow-hidden md:mx-0" key={e.timestamp}>{e.text}</div>
+            <div className="flex gap-2 w-full px-4 py-2 m-0 md:m-1 rounded-lg border-[0px] border-black mx-auto break-all overflow-hidden md:mx-0" key={e.timestamp}><div style={{ color: e.color }}>{e.name}:</div> {e.text}</div>
           )}
         </div>
         <div className="w-full h-[50px] md:h-[5%] flex flex-row gap-2">
