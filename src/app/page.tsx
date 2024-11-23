@@ -109,7 +109,7 @@ export default function Home() {
         <div className="overflow-scroll h-[100%] md:h-[95%] w-full px-0 md:px-4" ref={containerRef} style={{flexDirection: 'column'}}>
           <div className={`${messages ? "hidden" : "visible text-black mx-auto my-auto"}`}>Loading...</div>
           {messages?.map((e:any) => 
-            <div className="flex gap-2 w-full px-4 py-2 m-0 md:m-1 rounded-lg border-[0px] border-black mx-auto break-all overflow-hidden md:mx-0" key={e.timestamp}><div style={{ color: e.color }}>{e.name}:</div> {e.text}</div>
+            <div className="flex gap-2 w-full px-4 py-2 m-0 md:m-1 rounded-lg border-[0px] border-black mx-auto break-all overflow-hidden text-black md:mx-0" key={e.timestamp}><div style={{ color: e.color }}>{e.name}:</div> {e.text}</div>
           )}
         </div>
         <div className="w-full h-[50px] md:h-[5%] flex flex-row gap-2">
