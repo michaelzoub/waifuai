@@ -8,7 +8,7 @@ import Live2D from "./components/V2";
 
 export default function Home() {
 
-  const socket = io("http://localhost:3001");
+  const socket = io("waifuainode.railway.internal");
 
   const [messages, setMessages] = useState<any[]>([])
   const [newMessage, setNewMessage] = useState("")
