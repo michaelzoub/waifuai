@@ -2,7 +2,6 @@
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
-import V from "./components/V";
 import dynamic from 'next/dynamic'
 import Live2D from "./components/V2";
 
