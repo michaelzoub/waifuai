@@ -5,6 +5,10 @@ import io from "socket.io-client";
 import dynamic from 'next/dynamic'
 import Live2D from "./components/V2";
 import { neonColors, waifuNames } from "./data/random";
+import Link from "next/link";
+import background from "/public/backgroundai.png"
+import { atom } from 'jotai'
+import twitch from "/public/twitch.png"
 
 
 export default function Home() {
@@ -18,10 +22,19 @@ export default function Home() {
   const [error, setError] = useState("")
   const [lipsync, setLipsync] = useState(false)
   const [thinking, setThinking] = useState(false)
+  const [opened, setOpened] = useState(false)
+  const [ca, setCa] = useState(false)
+  const [viewers, setViewers] = useState<number>(0)
+  const [dark, setDark] = useState(false)
+
+  const darkmode = atom(dark)
 
   const containerRef: any = useRef(null)
 
   useEffect(() => {
+
+    const randomViewers = Math.floor(Math.random() * 100) * 10
+    setViewers(randomViewers)
 
     async function fetchMessages() {
       console.log("fetchmessage hit")
@@ -94,27 +107,63 @@ export default function Home() {
   }
 
   return (
-    <main className="w-full h-screen bg-white gap-2">
+    <main className={`${dark ? "w-full h-screen bg-zinc-900 text-white gap-2 overflow-hidden" : "w-full h-screen bg-zinc-100 gap-2 text-black"}`}>
       <div className="flex absolute w-full h-[2%]">
-        <h1 className="m-4 w-fit text-pink-400 text-xl font-semibold">Waifu AI!</h1>
+        <h1 className="m-4 w-fit text-pink-400 text-xl font-semibold">Asuna AI!</h1>
       </div>
-      <div className="w-full h-screen flex flex-col md:flex-row">
-      <div className="flex w-full md:w-[78%] h-[500px] md:h-[90%] my-auto border-[2px] border-black rounded-lg mx-auto overflow-hidden">
-        <div className="absolute m-2 text-red-500 font-semibold">● Live</div>
-        <Live2D></Live2D>
-        <div className={`${thinking? "absolute text-white rounded-full p-2 w-fit h-fit bg-orange-400 border-[2px] border-zinc-300 m-20" : "hidden"}`}>Thinking...</div>
-        <audio id="audio"></audio>
+      <div className="w-full h-screen flex flex-col overflow-y-visible md:overflow-hidden md:flex-row justify-between">
+      <div className={`${opened ? `w-[10%] h-screen py-4 px-1 pt-16 md: md:opacity-100 md:z-50 md:!static opacity-0 z-[-10] h-0 md:h-screen z-50 md:border-r-[1px] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300"}` : "md:flex md:opacity-100 h-0 md:h-screen md:z-50 w-[5%] p-4 pt-16 opacity-0 :z-[-10]"}`}>
+        <div className="flex flex-col">
+          <div className="w-full flex flex-row justify-end">
+            <button className="w-fit p-1 rounded-lg transition delay-150 ease-in-out hover:bg-zinc-400" onClick={() => setOpened((e) => !e)}>{opened ? <div>←</div> : <div>→</div>}</button>
+          </div>
+          <div className={`${opened ? "visible flex flex-col" : "hidden"}`}>
+            <div className="w-full p-1 rounded-lg transition delay-150 ease-in-out hover:bg-zinc-400">Test</div>
+            <div className="w-full p-1 rounded-lg transition delay-150 ease-in-out hover:bg-zinc-400">Twitter</div>
+            <div className="relative">
+              <div className="w-full p-1 rounded-lg transition delay-150 ease-in-out hover:bg-zinc-400" onMouseEnter={() => setCa(true)}>CA: ?</div>
+              <div className={`${ca ? `${dark ? "absolute text-sm rounded-lg p-2 mt-[-35px] border-[1px] border-zinc-500 bg-zinc-700" : "absolute text-sm rounded-lg p-2 mt-[-35px] border-[1px] border-zinc-500 bg-white"}` : "hidden"}`}     style={{left: '100%', marginLeft: '10px',}} onMouseLeave={() => setCa(false)}>398047u2040fh92hgr92hf9h238f32f</div>
+            </div>
+            <div className="mt-6 p-1 rounded-full w-[62px] border-[1px]">
+              <button className={`${dark ? "animatedark" : "animatelight"} transition delay-150 ease-in-out text-left text-sm`} onClick={() => setDark((e) => !e)}>{dark ? "☾" : "☼"}</button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="w-full md:w-[20%] h-[100px] md:h-[90%] my-auto">
-        <div className="overflow-scroll h-[100%] md:h-[95%] w-full px-0 md:px-4" ref={containerRef} style={{flexDirection: 'column'}}>
-          <div className={`${messages ? "hidden" : "visible text-black mx-auto my-auto"}`}>Loading...</div>
+      <div className="w-full md:w-[70%] h-[500px] md:h-[90%] ">
+        <div className={`${opened? "flex w-full h-[500px] md:h-[90%] my- border-[0px] border-black rounded- overflow-hidden bg-[url('/backgroundai.png')]" : "flex w-full md:w-[73%] h-[500px] md:h-[90%] my-auto border-[2px] border-black rounded-lg mx-auto overflow-hidden bg-[url('/backgroundai.png')]"}`}>
+          <div className="flex flex-row justify-between absolute md:w-[68%] w-full font-semibold">
+            <div className="m-2 text-white rounded-lg p-2 bg-red-500 font-semibold">● Live</div>
+            <div className="m-2 text-red-500 font-semibold">👁 {viewers} viewers</div>
+          </div>
+          <Live2D></Live2D>
+          <div className={`${thinking? "absolute text-white rounded-full p-2 w-fit h-fit bg-orange-400 border-[2px] border-zinc-300 m-20" : "hidden"}`}>Thinking...</div>
+          <audio id="audio"></audio>
+        </div>
+        <div className="flex flex-row md:h-fit h-0 md:opacity-100 opacity-0">
+          <Image src={twitch} className="rounded-full" width={75} height={50} alt="pfp"></Image>
+          <div className="flex flex-col m-2 gap-0">
+            <h1 className="font-medium text-xl z-50">Asuna</h1>
+            <h1 className="font-semibold text-2xl">Your favorite waifu Asuna is strimming.</h1>
+          </div>
+        </div>
+      </div>
+      <div className={`w-full md:w-[20%] h-[300px] md:mt-[0px] mt-[-30px] md:h-[100%] pb-4 my-auto z-50 border-l-[0px] md:border-l-[1px] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-50"}`}>
+        <div className={`${dark ? "w-full h-[6%] overflow-hidden font-semibold bg-zinc-700" : "w-full h-[6%] overflow-hidden font-semibold bg-zinc-100"}`}>
+          <div className="animation flex text-red-300 whitespace-nowrap my-2 mx-2 p-2">DONOS: 100$ / 231$ /234$ / 54359$ / 453$ / 100$ / 231$ /234$ / 54359$ / 453$</div>
+        </div>
+        <div className="overflow-scroll h-[100%] md:h-[87%] w-full px-0 md:px-4" ref={containerRef} style={{flexDirection: 'column'}}>
+          <div className={`${messages ? "hidden" : "visible mx-auto my-auto"}`}>Loading...</div>
           {messages?.map((e:any) => 
-            <div className="flex gap-2 w-full px-4 py-2 m-0 md:m-1 rounded-lg border-[0px] border-black mx-auto break-all overflow-hidden text-black md:mx-0" key={e.timestamp}><div style={{ color: e.color }}>{e.name}:</div> {e.text}</div>
+            <div className="flex gap-2 w-full px-4 py-2 m-0 md:m-1 rounded-lg border-[0px] border-black mx-auto break-all overflow-hidden md:mx-0" key={e.timestamp}><div style={{ color: e.color }} className="font-semibold">{e.name}:</div> {e.text}</div>
           )}
         </div>
-        <div className="w-full h-[50px] md:h-[5%] flex flex-row gap-2">
-          <input className="w-full border-[2px] border-black rounded-lg px-2" placeholder="Talk to waifu!" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onSubmit={sendButton}></input>
-          <button className="text-white bg-pink-500 border-[2px] border-pink-300 p-1 px-4  rounded-lg" onClick={sendButton}>Send</button>
+        <div className="w-full h-[50px] md:h-[7%] flex flex-col gap-1">
+          <input className={`${dark ? "mx-2 border-[1px] border-black rounded-lg px-2 py-1 bg-zinc-700" : "mx-2 border-[1px] border-black rounded-lg px-2 py-1 bg-zinc-50"}`} placeholder="Talk to waifu!" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onSubmit={sendButton}></input>
+          <div className="w-full px-2 flex flex-row justify-between">
+            <div></div>
+            <button className="text-white bg-pink-500 border-[2px] border-pink-300 p-1 px-4 text-sm rounded-lg" onClick={sendButton}>Chat</button>
+          </div>
         </div>
         <div className={`${error? "p-1 bg-red-500 border-[2px] border-red-400 w-fit m-1 rounded-lg text-xs text-white" : "hidden"}`}>{error}</div>
       </div>
