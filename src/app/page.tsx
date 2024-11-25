@@ -118,7 +118,7 @@ export default function Home() {
   }
 
   return (
-    <main className={`${dark ? "flex flex-col w-full h-screen bg-zinc-900 text-white" : "flex flex-col w-full h-screen bg-zinc-100 text-black"}`}>
+    <main className={`${dark ? "flex flex-col w-full min-h-screen md:h-screen bg-zinc-900 text-white" : "flex flex-col w-full min-h-screen md:h-screen bg-zinc-100 text-black"}`}>
       <div className={`${loading? "absolute flex w-full h-screen bg-white z-[1000]" : "hidden"}`}>
         <div className="loading z-[1000] my-auto mx-auto"></div>
       </div>
