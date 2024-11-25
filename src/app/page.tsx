@@ -170,9 +170,9 @@ export default function Home() {
             <div className="flex gap-2 w-full px-4 py-2 m-0 md:m-1 rounded-lg border-[0px] border-black mx-auto break-all overflow-hidden md:mx-0" key={e.timestamp}><div style={{ color: e.color }} className="font-semibold">{e.name}:</div> {e.text}</div>
           )}
         </div>
-        <div className="w-full h-[50px] md:h-[7%] flex flex-col gap-1">
+        <div className={`${dark ? "w-full h-[50px] md:h-[7%] flex flex-col gap-1 bg-zinc-900" : "w-full h-[50px] md:h-[7%] flex flex-col gap-1 bg-zinc-50"}`}>
           <input className={`${dark ? "mx-2 border-[1px] border-black rounded-lg px-2 py-1 bg-zinc-700" : "mx-2 border-[1px] border-black rounded-lg px-2 py-1 bg-zinc-50"}`} placeholder="Talk to waifu!" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onSubmit={sendButton}></input>
-          <div className={`${dark ? "w-full px-2 flex flex-row justify-between bg-zinc-700" : "w-full px-2 flex flex-row justify-between bg-zinc-50"}`}>
+          <div className="w-full px-2 flex flex-row justify-between">
             <div></div>
             <button className="text-white bg-pink-500 border-[2px] border-pink-300 p-1 px-4 text-sm rounded-lg" onClick={sendButton}>Chat</button>
           </div>
