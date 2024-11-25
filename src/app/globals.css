@@ -50,6 +50,23 @@
   animation-delay: 0.15s;
 }
 
+.loading {
+  width: 75px; 
+  height: 75px; 
+  border-radius: 50%; 
+  border: 7px solid #f5fcff; 
+  border-left: 7px solid #686868; 
+  animation: load 0.5s infinite linear;
+}
+
+@keyframes load {
+  0% {
+    transform: rotate(0deg);
+  } 100% {
+    transform: rotate(360deg);
+  }
+}
+
 @keyframes slide {
   0% {
     transform: translateX(0);

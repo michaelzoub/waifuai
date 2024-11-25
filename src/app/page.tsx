@@ -27,6 +27,7 @@ export default function Home() {
   const [ca, setCa] = useState(false)
   const [viewers, setViewers] = useState<number>(0)
   const [dark, setDark] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   const darkmode = atom(dark)
 
@@ -61,6 +62,9 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
+    setTimeout(() => {
+      setLoading(false)
+    }, 1500)
     if (containerRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight - containerRef.current.clientHeight;
     }
@@ -109,6 +113,9 @@ export default function Home() {
 
   return (
     <main className={`${dark ? "w-full h-screen bg-zinc-900 text-white gap-2 overflow-hidden" : "flex flex-col w-full h-screen bg-zinc-100 gap-2 text-black"}`}>
+      <div className={`${loading? "absolute flex w-full h-screen bg-white z-[1000]" : "hidden"}`}>
+        <div className="loading z-[1000] my-auto mx-auto"></div>
+      </div>
       <Navbar darkmode={dark}></Navbar>
       <div className="w-full h-screen flex flex-col overflow-y-visible md:overflow-hidden md:flex-row justify-between">
       <div className={`${opened ? `w-[10%] h-screen py-4 px-1 pt-2 md: md:opacity-100 md:z-50 md:!static opacity-0 z-[-10] h-0 md:h-screen z-50 md:border-r-[1px] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300"}` : "md:flex md:opacity-100 h-0 md:h-screen md:z-50 w-[1%] p-4 pt-2 opacity-0 :z-[-10]"}`}>
