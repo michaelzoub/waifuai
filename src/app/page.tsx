@@ -9,6 +9,7 @@ import Link from "next/link";
 import background from "/public/backgroundai.png"
 import { atom } from 'jotai'
 import twitch from "/public/twitch.png"
+import Navbar from "./components/navbar";
 
 
 export default function Home() {
@@ -107,12 +108,10 @@ export default function Home() {
   }
 
   return (
-    <main className={`${dark ? "w-full h-screen bg-zinc-900 text-white gap-2 overflow-hidden" : "w-full h-screen bg-zinc-100 gap-2 text-black"}`}>
-      <div className="flex absolute w-full h-[2%]">
-        <h1 className="m-4 w-fit text-pink-400 text-xl font-semibold">Asuna AI!</h1>
-      </div>
+    <main className={`${dark ? "w-full h-screen bg-zinc-900 text-white gap-2 overflow-hidden" : "flex flex-col w-full h-screen bg-zinc-100 gap-2 text-black"}`}>
+      <Navbar darkmode={dark}></Navbar>
       <div className="w-full h-screen flex flex-col overflow-y-visible md:overflow-hidden md:flex-row justify-between">
-      <div className={`${opened ? `w-[10%] h-screen py-4 px-1 pt-16 md: md:opacity-100 md:z-50 md:!static opacity-0 z-[-10] h-0 md:h-screen z-50 md:border-r-[1px] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300"}` : "md:flex md:opacity-100 h-0 md:h-screen md:z-50 w-[5%] p-4 pt-16 opacity-0 :z-[-10]"}`}>
+      <div className={`${opened ? `w-[10%] h-screen py-4 px-1 pt-16 md: md:opacity-100 md:z-50 md:!static opacity-0 z-[-10] h-0 md:h-screen z-50 md:border-r-[1px] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300"}` : "md:flex md:opacity-100 h-0 md:h-screen md:z-50 w-[1%] p-4 pt-16 opacity-0 :z-[-10]"}`}>
         <div className="flex flex-col">
           <div className="w-full flex flex-row justify-end">
             <button className="w-fit p-1 rounded-lg transition delay-150 ease-in-out hover:bg-zinc-400" onClick={() => setOpened((e) => !e)}>{opened ? <div>←</div> : <div>→</div>}</button>
@@ -131,7 +130,7 @@ export default function Home() {
         </div>
       </div>
       <div className="w-full md:w-[70%] h-[500px] md:h-[90%] ">
-        <div className={`${opened? "flex w-full h-[500px] md:h-[90%] my- border-[0px] border-black rounded- overflow-hidden bg-[url('/backgroundai.png')]" : "flex w-full md:w-[73%] h-[500px] md:h-[90%] my-auto border-[2px] border-black rounded-lg mx-auto overflow-hidden bg-[url('/backgroundai.png')]"}`}>
+        <div className={`${opened? "flex w-full h-[500px] md:h-[90%] my- border-[0px] border-black rounded- overflow-hidden bg-[url('/backgroundai.png')]" : "flex w-full h-[500px] md:h-[90%] my-auto border-[0px] border-black rounded- mx- overflow-hidden bg-[url('/backgroundai.png')]"}`}>
           <div className="flex flex-row justify-between absolute md:w-[68%] w-full font-semibold">
             <div className="m-2 text-white rounded-lg p-2 bg-red-500 font-semibold">● Live</div>
             <div className="m-2 text-red-500 font-semibold">👁 {viewers} viewers</div>
