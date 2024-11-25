@@ -28,12 +28,19 @@ export default function Home() {
   const [viewers, setViewers] = useState<number>(0)
   const [dark, setDark] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [waifuName, setWaifuName] = useState("")
+  const [nameColor, setNameColor] = useState("")
 
   const darkmode = atom(dark)
 
   const containerRef: any = useRef(null)
 
   useEffect(() => {
+
+    const waifuNumber = Math.floor(Math.random() * 50)
+    const colorNumber = Math.floor(Math.random() * 10)
+    setWaifuName(waifuNames[waifuNumber])
+    setNameColor(neonColors[colorNumber])
 
     const randomViewers = Math.floor(Math.random() * 100) * 10
     setViewers(randomViewers)
@@ -62,6 +69,7 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
+
     setTimeout(() => {
       setLoading(false)
     }, 1500)
@@ -75,11 +83,9 @@ export default function Home() {
     console.log(amountOfCharacters.length)
     if (amountOfCharacters.length < 100) {
       if (event.key == "Enter" || event.type == "click") {
-        const waifuNumber = Math.floor(Math.random() * 50)
-        const colorNumber = Math.floor(Math.random() * 10)
         setThinking(true)
-        socket.emit("message", { text: newMessage, timestamp: Date.now(), name: waifuNames[waifuNumber], color: neonColors[colorNumber] })
-        console.log(neonColors[colorNumber])
+        socket.emit("message", { text: newMessage, timestamp: Date.now(), name: waifuName, color: nameColor })
+        console.log(nameColor)
         async function audio() {
           const response = await fetch("/api/sendtoai", {
             method: "POST",
@@ -112,7 +118,7 @@ export default function Home() {
   }
 
   return (
-    <main className={`${dark ? "flex flex-col w-full h-screen bg-zinc-900 gap-2 text-white" : "flex flex-col w-full h-screen bg-zinc-100 gap-2 text-black"}`}>
+    <main className={`${dark ? "flex flex-col w-full h-screen bg-zinc-900 text-white" : "flex flex-col w-full h-screen bg-zinc-100 text-black"}`}>
       <div className={`${loading? "absolute flex w-full h-screen bg-white z-[1000]" : "hidden"}`}>
         <div className="loading z-[1000] my-auto mx-auto"></div>
       </div>
