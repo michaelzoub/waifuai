@@ -119,7 +119,7 @@ export default function Home() {
 
   return (
     <main className={`${dark ? "flex flex-col w-full min-h-screen md:h-screen bg-zinc-900 text-white" : "flex flex-col w-full min-h-screen md:h-screen bg-zinc-100 text-black"}`}>
-      <div className={`${loading? "absolute flex w-full h-screen bg-white z-[1000]" : "hidden"}`}>
+      <div className={`${loading? "absolute flex w-full h-screen bg-white z-[1000] overflow-hidden" : "hidden"}`}>
         <div className="loading z-[1000] my-auto mx-auto"></div>
       </div>
       <Navbar darkmode={dark}></Navbar>
@@ -160,8 +160,8 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className={`w-full md:w-[20%] h-[300px] md:mt-[0px] mt-[-30px] md:h-[100%] pb-4 my-auto z-50 border-l-[0px] md:border-l-[1px] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-50"}`}>
-        <div className={`${dark ? "w-full h-[6%] overflow-hidden font-semibold bg-zinc-700" : "w-full h-[6%] overflow-hidden font-semibold bg-zinc-100"}`}>
+      <div className={`w-full md:w-[20%] h-[350px] md:mt-[0px] mt-[-30px] md:h-[100%] pb-4 my-auto z-50 border-l-[0px] md:border-l-[1px] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-100 md:bg-zinc-50"}`}>
+        <div className={`${dark ? "w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-700" : "w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-100"}`}>
           <div className="animation flex text-red-300 whitespace-nowrap my-2 mx-2 p-2">DONOS: 100$ / 231$ /234$ / 54359$ / 453$ / 100$ / 231$ /234$ / 54359$ / 453$</div>
         </div>
         <div className="overflow-scroll h-[100%] md:h-[87%] w-full px-0 md:px-4" ref={containerRef} style={{flexDirection: 'column'}}>
@@ -170,7 +170,7 @@ export default function Home() {
             <div className="flex gap-2 w-full px-4 py-2 m-0 md:m-1 rounded-lg border-[0px] border-black mx-auto break-all overflow-hidden md:mx-0" key={e.timestamp}><div style={{ color: e.color }} className="font-semibold">{e.name}:</div> {e.text}</div>
           )}
         </div>
-        <div className={`${dark ? "w-full h-[50px] md:h-[7%] flex flex-col gap-1 bg-zinc-900" : "w-full h-[50px] md:h-[7%] flex flex-col gap-1 bg-zinc-50"}`}>
+        <div className={`${dark ? "w-full h-[50px] md:h-[7%] flex flex-col gap-1" : "w-full h-[50px] md:h-[7%] flex flex-col gap-1"}`}>
           <input className={`${dark ? "mx-2 border-[1px] border-black rounded-lg px-2 py-1 bg-zinc-700" : "mx-2 border-[1px] border-black rounded-lg px-2 py-1 bg-zinc-50"}`} placeholder="Talk to waifu!" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onSubmit={sendButton}></input>
           <div className="w-full px-2 flex flex-row justify-between">
             <div></div>
