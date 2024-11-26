@@ -123,7 +123,7 @@ export default function Home() {
         <div className="loading z-[1000] my-auto mx-auto"></div>
       </div>
       <Navbar darkmode={dark}></Navbar>
-      <div className="w-full h-screen flex flex-col overflow-y-visible md:overflow-hidden md:flex-row justify-between">
+      <div className={`w-full min-h-screen md:h-screen flex flex-col overflow-y-visible md:overflow-hidden md:flex-row justify-between ${dark ? "bg-zinc-900" : "bg-zinc-100"}`}>
       <div className={`${opened ? `w-[10%] h-screen py-4 px-1 pt-2 md: md:opacity-100 md:z-50 md:!static opacity-0 z-[-10] h-0 md:h-screen z-50 md:border-r-[1px] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300"}` : "md:flex md:opacity-100 h-0 md:h-screen md:z-50 w-[1%] p-4 pt-2 opacity-0 :z-[-10]"}`}>
         <div className="flex flex-col">
           <div className="w-full flex flex-row justify-end">
