@@ -164,15 +164,15 @@ export default function Home() {
         <div className={`${dark ? "w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-700" : "w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-100"}`}>
           <div className="animation flex text-red-300 whitespace-nowrap my-2 mx-2 p-2">DONOS: 100$ / 231$ /234$ / 54359$ / 453$ / 100$ / 231$ /234$ / 54359$ / 453$</div>
         </div>
-        <div className="overflow-scroll h-[100%] md:h-[87%] w-full px-0 md:px-4" ref={containerRef} style={{flexDirection: 'column'}}>
+        <div className="overflow-scroll h-[250px] md:h-[87%] w-full px-0 md:px-4" ref={containerRef} style={{flexDirection: 'column'}}>
           <div className={`${messages ? "hidden" : "visible mx-auto my-auto"}`}>Loading...</div>
           {messages?.map((e:any) => 
             <div className="flex gap-2 w-full px-4 py-2 m-0 md:m-1 rounded-lg border-[0px] border-black mx-auto break-all overflow-hidden md:mx-0" key={e.timestamp}><div style={{ color: e.color }} className="font-semibold">{e.name}:</div> {e.text}</div>
           )}
         </div>
-        <div className={`${dark ? "w-full h-[50px] md:h-[7%] flex flex-col gap-1" : "w-full h-[50px] md:h-[7%] flex flex-col gap-1"}`}>
-          <input className={`${dark ? "mx-2 border-[1px] border-black rounded-lg px-2 py-1 bg-zinc-700" : "mx-2 border-[1px] border-black rounded-lg px-2 py-1 bg-zinc-50"}`} placeholder="Talk to waifu!" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onSubmit={sendButton}></input>
-          <div className="w-full px-2 flex flex-row justify-between">
+        <div className={`${dark ? "bg-zinc-900 w-full h-[200px] md:h-[7%] flex flex-row md:flex-col gap-0 md:gap-1" : "bg-zinc-100 w-full h-[200px] md:h-[7%] flex flex-row md:flex-col gap-0 md:gap-1"}`}>
+          <input className={`${dark ? "mx-1 md:mx-2 border-[1px] w-full md:w-[90%] h-fit border-black rounded-lg px-2 py-1 bg-zinc-700" : "mx-1 md:mx-2 border-[1px] w-full md:w-[90%] h-fit border-black rounded-lg px-2 py-1 bg-zinc-50"}`} placeholder="Talk to waifu!" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onSubmit={sendButton}></input>
+          <div className="w-20 md:w-full px-2 flex flex-row justify-end md:justify-between h-fit">
             <div></div>
             <button className="text-white bg-pink-500 border-[2px] border-pink-300 p-1 px-4 text-sm rounded-lg" onClick={sendButton}>Chat</button>
           </div>
