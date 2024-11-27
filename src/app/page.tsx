@@ -34,8 +34,10 @@ export default function Home() {
   const [waifuName, setWaifuName] = useState("")
   const [nameColor, setNameColor] = useState("")
   const [follow, setFollow] = useState(false)
+  const [volume, setVolume] = useState(90)
 
   const containerRef: any = useRef(null)
+  const audioRef: any = useRef(null)
 
   useEffect(() => {
 
@@ -80,6 +82,11 @@ export default function Home() {
     }
   }, [messages])
 
+  useEffect(() => {
+    const audio = audioRef.current
+    audio.volume = (volume / 100)
+  }, [volume])
+
   function sendButton(event: any) {
     const amountOfCharacters = newMessage.split("")
     console.log(amountOfCharacters.length)
@@ -119,12 +126,20 @@ export default function Home() {
       }
   }
 
+  function playMusic() {
+    const audio = audioRef.current
+    audio.src = "/chill.mp3"
+    audio.volume = 0.9
+    audio?.play()
+  }
+
   return (
     <main className={`${dark ? `flex flex-col w-full min-h-screen md:overflow-hidden md:h-screen bg-zinc-900 text-white ${loading ? "overflow-hidden" : "overflow-visible"}` : `flex flex-col w-full min-h-screen overflow-visible md:overflow-hidden md:h-screen bg-zinc-100 text-black ${loading ? "overflow-hidden" : "overflow-visible"}`}`}>
       <div className={`${loading? "absolute flex w-full h-screen bg-white z-[1000] overflow-hidden" : "hidden"}`}>
         <div className="loading z-[1000] my-auto mx-auto"></div>
       </div>
       <Navbar darkmode={dark}></Navbar>
+      <audio src={"/chill.mp3"} ref={audioRef}></audio>
       <div className={`w-full min-h-screen md:h-screen flex flex-col overflow-y-visible md:overflow-hidden md:flex-row justify- ${dark ? "bg-zinc-900" : "bg-zinc-100"}`}>
       <div className={`${opened ? `w-[15%] h-screen py-4 px-1 pt-2 md: md:opacity-100 md:z-50 md:!static opacity-0 z-[-10] h-0 md:h-screen z-50 md:border-r-[1px] overflow-hidden ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-200"}` : "md:flex md:opacity-100 h-0 md:h-screen md:z-50 w-[5%] p-4 pt-2 opacity-0 :z-[-10]"}`}>
         <div className="flex flex-col">
@@ -182,10 +197,14 @@ export default function Home() {
         </div>
       </div>
       <div className={`w-full md:w-[20%] h-[350px] md:mt-[0px] mt-[-30px] md:h-[97%] pb-4 my-auto z-50 border-l-[0px] md:border-l-[1px] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-100 md:bg-zinc-50"}`}>
+        <div className="flex flex-row items-center justify-center gap-2 w-full text-left px-2 text-xl">
+          <button className="px-2 rounded-md" onClick={playMusic}>⏯</button>
+          <input type="range" min="0" max="100" value={volume} className="w-[100%] transition-all slider" onChange={(e:any) => setVolume(e.target.value)}></input>
+        </div>
         <div className={`${dark ? "w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-700" : "w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-100"}`}>
           <div className="animation flex text-red-300 whitespace-nowrap my-2 mx-2 p-2">DONOS: 100$ / 231$ /234$ / 54359$ / 453$ / 100$ / 231$ /234$ / 54359$ / 453$</div>
         </div>
-        <div className="overflow-scroll h-[250px] md:h-[83%] w-full px-0 md:px-4" ref={containerRef} style={{flexDirection: 'column'}}>
+        <div className="overflow-scroll h-[250px] md:h-[80%] w-full px-0 md:px-4" ref={containerRef} style={{flexDirection: 'column'}}>
           <div className={`${messages ? "hidden" : "visible mx-auto my-auto"}`}>Loading...</div>
           {messages?.map((e:any) => 
             <div className="flex gap-2 w-full px-4 py-1 m-0 md:m-1 rounded-lg border-[0px] border-black mx-auto break-all overflow-hidden md:mx-0" key={e.timestamp}><div style={{ color: e.color }} className="font-semibold no-wrap whitespace-nowrap">{e.name}:</div> {e.text}</div>

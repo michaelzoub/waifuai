@@ -14,6 +14,26 @@
   }
 }
 
+.slider {
+  -webkit-appearance: none; /* Remove default appearance in WebKit browsers */
+  appearance: none; /* Standardize removal of default appearance */
+  width: 100%; /* Full width */
+  height: 8px; /* Track height */
+  background: #ededed; /* Track color */
+  border-radius: 5px; /* Rounded corners for track */
+  outline: none; /* Remove focus outline */
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 15px; /* Set a specific slider handle width */
+  height: 15px; /* Slider handle height */
+  background: pink; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+  border-radius: 100%;
+}
+
 .animation {
   animation: scroll 12s infinite linear;
 }
