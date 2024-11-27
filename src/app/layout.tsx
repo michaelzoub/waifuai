@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import {Ubuntu_Mono} from "next/font/google"
+import { Monda } from "next/font/google"
+import Navbar from "./components/navbar";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -14,7 +16,7 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-const ubuntu = Ubuntu_Mono({
+const ubuntu = Monda({
   weight: ["400"],
   subsets: ["latin"]
 })

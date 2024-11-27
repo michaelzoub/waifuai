@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
-    domains: ['cdn.jsdelivr.net'],
+    domains: ['cdn.jsdelivr.net', "pbs.twimg.com"],
   },
   
 };
