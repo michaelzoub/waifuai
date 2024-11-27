@@ -144,19 +144,19 @@ export default function Home() {
       <div className={`${opened ? `w-[15%] h-screen py-4 px-1 pt-2 md: md:opacity-100 md:z-50 md:!static opacity-0 z-[-10] h-0 md:h-screen z-50 md:border-r-[1px] overflow-hidden ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-200"}` : "md:flex md:opacity-100 h-0 md:h-screen md:z-50 w-[5%] p-4 pt-2 opacity-0 :z-[-10]"}`}>
         <div className="flex flex-col">
           <div className="w-full flex flex-row justify-between items-center">
-            <h1 className={`${opened ? "visible font-semibold" : "hidden"}`}>Recommended</h1>
+            <h1 className={`${opened ? "visible font-semibold" : "hidden opacity-0"}`}>Recommended</h1>
             <button className="w-fit p-1 rounded-lg transition delay-150 ease-in-out hover:text-zinc-400" onClick={() => setOpened((e) => !e)}>{opened ? <div>◄</div> : <div>►</div>}</button>
           </div>
-          <div className={`${opened ? "visible flex flex-col mt-4" : "hidden"}`}>
+          <div className={`${opened ? "visible flex flex-col mt-4" : "visible pt-4"}`}>
             <div className="flex flex-col gap-2" key="list">
               {
                 kol.map((e) => 
                   <Link href={e.link} className={`flex flex-row gap-2 p-1 rounded-md overflow-hidden ${dark ? "hover:bg-zinc-700" : "hover:bg-zinc-300"}`} key={e.name}>
-                    <Image src={e.profilepic} alt="pfp" width={30} height={30} className="w-10 h-10 rounded-full"></Image>
-                    <div className="flex flex-col text-sm" key={e.link}>
-                      <h1 className="text-lg font-semibold">{e.name}</h1>
-                      <h1 className="text-pink-500">{e.at}</h1>
-                      <h1>{e.followers}</h1>
+                    <Image src={e.profilepic} alt="pfp" width={30} height={30} className={`w-10 h-10 rounded-full ${opened ? "visible" : "visible"}`}></Image>
+                    <div className={`flex flex-col text-sm ${opened ? "visible" : "hidden"}`} key={e.link}>
+                      <h1 className={`text-lg font-semibold ${opened ? "visible" : "visible"}`}>{e.name}</h1>
+                      <h1 className={`text-pink-500 ${opened ? "visible" : "visible"}`}>{e.at}</h1>
+                      <h1 className={`${opened ? "visible" : "visible"}`}>{e.followers}</h1>
                     </div>
                   </Link>
                 )
