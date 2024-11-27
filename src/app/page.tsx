@@ -35,6 +35,7 @@ export default function Home() {
   const [nameColor, setNameColor] = useState("")
   const [follow, setFollow] = useState(false)
   const [volume, setVolume] = useState(90)
+  const [play, setPlay] = useState(false)
 
   const containerRef: any = useRef(null)
   const audioRef: any = useRef(null)
@@ -127,10 +128,15 @@ export default function Home() {
   }
 
   function playMusic() {
+    setPlay((e: boolean) => !e)
     const audio = audioRef.current
-    audio.src = "/chill.mp3"
-    audio.volume = 0.9
-    audio?.play()
+    if (play) {
+      audio.src = "/chill.mp3"
+      audio.volume = (volume / 100)
+      audio?.play()
+    } else {
+      audio?.pause()
+    }
   }
 
   return (
