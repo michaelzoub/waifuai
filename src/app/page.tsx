@@ -216,7 +216,7 @@ export default function Home() {
               <div className={`w-fit flex flex-row justify-between items-center ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
                 <div className="m-2 text-red-500 font-semibold text-sm m-2">👁 {viewers} viewers</div>
                 <div className="text-sm">•</div>
-                <div className="m-2 font-medium text-sm m-2">{time <= 9 ? (<span>0{Math.floor(time / 60)}</span>) : (<span>{Math.floor(time / 60)}</span>)}:{time <= 9 ? <span>0{time % 60}</span> : <span>{time % 60}</span>}</div>
+                <div className="m-2 font-medium text-sm m-2">{time <= 600 ? (<span>0{Math.floor(time / 60)}</span>) : (<span>{Math.floor(time / 60)}</span>)}:{time <= 9 ? <span>0{time % 60}</span> : <span>{time % 60}</span>}</div>
               </div>
             </div>
           </div>
