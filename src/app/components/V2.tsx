@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react';
 
+declare global {
+  interface Window {
+    live2DModel?: any;  // Declare live2DModel as an optional property
+    live2D?: any;
+    Live2DModelJS?: any;
+  }
+}
+
 const Live2D = () => {
-  // State to check if the component is mounted on the client
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Mark the component as mounted on the client
     setMounted(true);
 
     // Dynamically load the Live2D script on the client
@@ -16,21 +22,53 @@ const Live2D = () => {
       if (typeof window !== 'undefined' && window.loadlive2d) {
         window.loadlive2d(
           "live2d",
-          "https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/r93_3501/model.json" // Ensure this path is correct
+          "https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/r93_3501/model.json"
         );
+      console.log("pre check")
+      console.log("live2d :", window.live2DModel)
+      if (window.live2DModel) {
+        console.log("Animating mouth")
+        let mouthOpenValue = 0.5;
+        let direction = 0.02;
+
+        const animateMouth = () => {
+          // Oscillate mouth open value
+          mouthOpenValue += direction;
+          
+          // Reverse direction at peaks
+          if (mouthOpenValue > 0.5 || mouthOpenValue < 0) {
+            direction *= -1;
+          }
+
+          // Set mouth open parameter
+          // Note: The exact parameter name might vary between models
+          try {
+            window.live2DModel.setParamFloat('PARAM_MOUTH_OPEN_Y', mouthOpenValue);
+          } catch (error) {
+            console.error("Could not set mouth parameter:", error);
+          }
+
+          // Continue animation
+          requestAnimationFrame(animateMouth);
+        };
+
+        // Start mouth animation
+        animateMouth();
+      }
+  
       }
     };
     document.body.appendChild(script);
 
-    // Cleanup the script on component unmount
+
     return () => {
-      document.body.removeChild(script);
+      if (script && document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
     };
   }, []);
-
-  // Only render the canvas after the component has mounted (client-side)
   if (!mounted) {
-    return null; // Or return a placeholder or loading component if you prefer
+    return null; 
   }
 
   return (

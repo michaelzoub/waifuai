@@ -98,17 +98,6 @@ export default function Home() {
   }, [volume])
 
   useEffect(() => {
-
-    setInterval(() => {
-      setPolling((e:any) => !e)
-      if (polling == false) {
-        //delete the poll in mongodb
-        socket.emit("poll", pollObject)
-      }
-    }, 20 * 60)
-  }, [])
-
-  useEffect(() => {
     setInterval(() => {
       setTime((e) => e + 1)
     }, 1000)
@@ -172,19 +161,25 @@ export default function Home() {
       </div>
       <Navbar darkmode={dark}></Navbar>
       <audio src={"/chill.mp3"} ref={audioRef}></audio>
-      <div className={`w-full min-h-screen md:h-screen flex flex-col overflow-y-visible md:overflow-hidden md:flex-row justify- ${dark ? "bg-zinc-900" : "bg-zinc-100"}`}>
-      <div className={`${opened ? `w-[15%] h-screen py-4 px-1 pt-2 md: md:opacity-100 md:z-50 md:!static opacity-0 z-[-10] h-0 md:h-screen z-50 md:border-r-[1px] overflow-hidden ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-200"}` : "md:flex md:opacity-100 h-0 md:h-screen md:z-50 w-[5%] p-4 pt-2 opacity-0 :z-[-10]"}`}>
+      <div className={`w-full min-h-screen md:h-screen flex flex-col md:overflow-hidden md:flex-row ${loading ? "overflow-hidden" : "overflow-visible overflow-y-visible"} ${dark ? "bg-zinc-900" : "bg-zinc-100"}`}>
+      <div className={`${opened ? `w-full md:w-[15%] absolute z-[10000] h-screen py-4 px-1 pt-2 md: md:opacity-100 md:z-50 md:!static opacity-100 h-0 md:h-screen z-50 md:border-r-[1px] overflow-hidden ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-200"}` : "z-1000 md:flex md:opacity-100 h-20 md:h-screen md:z-50 w-[90px] p-4 md:p-1 justify-center pt-2 opacity-100 :z-[-10]"}`}>
         <div className="flex flex-col">
           <div className="w-full flex flex-row justify-between items-center">
             <h1 className={`${opened ? "visible font-semibold" : "hidden opacity-0"}`}>Recommended</h1>
-            <button className="w-fit p-1 rounded-lg transition delay-150 ease-in-out hover:text-zinc-400" onClick={() => setOpened((e) => !e)}><motion.div animate={{rotate: opened ? 180 : 0}}>►</motion.div></button>
+            <button className="w-fit p-1 rounded-lg transition delay-150 ease-in-out hover:text-zinc-400" onClick={() => setOpened((e) => !e)}>
+              <motion.div animate={{rotate: opened ? 180 : 0}}>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
+                  <path d="M8 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
+                </svg>
+              </motion.div>
+            </button>
           </div>
-          <div className={`${opened ? "visible flex flex-col mt-4" : "visible pt-4"}`}>
+          <div className={`${opened ? "visible flex flex-col mt-4" : "visible pt-4 opacity-0 absolute md:!static md:opacity-100 md:z-50 z-[-100]"}`}>
             <div className="flex flex-col gap-2" key="list">
               {
                 kol.map((e) => 
                   <Link href={e.link} target="_blank" className={`flex flex-row gap-2 p-1 rounded-md overflow-hidden ${dark ? "hover:bg-zinc-700" : "hover:bg-zinc-300"}`} key={e.name}>
-                    <Image src={e.profilepic} alt="pfp" width={30} height={30} className={`w-10 h-10 rounded-full ${opened ? "visible" : "visible"}`}></Image>
+                    <Image src={e.profilepic} alt="pfp" width={30} height={30} className={`w-8 h-8 rounded-full lg:w-10 lg:h-10 ${opened ? "visible" : "visible"}`}></Image>
                     <div className={`flex flex-col text-sm ${opened ? "visible" : "hidden"}`} key={e.link}>
                       <h1 className={`text-lg font-semibold ${opened ? "visible" : "visible"}`}>{e.name}</h1>
                       <h1 className={`text-pink-500 ${opened ? "visible" : "visible"}`}>{e.at}</h1>
@@ -199,7 +194,7 @@ export default function Home() {
         </div>
       </div>
       <div className={`w-full md:w-[75%] md:h-[90%]  ${opened ? "h-[500px]" : "h-[600px]"}`}>
-        <div className={`${opened? "flex w-full h-[500px] md:h-[90%] my- border-[0px] border-black rounded- overflow-hidden bg-[url('/backgroundai.png')]" : "flex flex-grow w-full h-[550px] md:h-[86%] my-auto border-[0px] border-black rounded- mx- overflow-hidden bg-[url('/backgroundai.png')]"}`}>
+        <div className={`${opened? "flex w-full h-[500px] md:h-[90%] my- border-[0px] border-black rounded- overflow-hidden bg-[url('/house.png')]" : "flex flex-grow w-full h-[550px] md:h-[86%] my-auto border-[0px] border-black rounded- mx- overflow-hidden bg-white bg-[url('/house.png')]"}`}>
           <div className="flex flex-row justify- absolute md:w-[64%] w-full font-semibold">
             <div className="m-2 text-white rounded-sm p-2 px-4 bg-red-600 font-semibold">Live</div>
           </div>
@@ -230,10 +225,6 @@ export default function Home() {
         </div>
       </div>
       <div className={`w-full md:w-[20%] h-[350px] md:mt-[0px] mt-[-30px] md:h-[97%] pb-4 my-auto z-50 border-l-[0px] md:border-l-[1px] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-100 md:bg-zinc-50"}`}>
-        <div className="flex flex-row items-center justify-center gap-2 w-full text-left px-2 text-xl">
-          <button className="px-2 rounded-md" onClick={playMusic}>⏯</button>
-          <input type="range" min="0" max="100" value={volume} className="w-[100%] transition-all slider" onChange={(e:any) => setVolume(e.target.value)}></input>
-        </div>
         <div className={`${dark ? "w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-700" : "w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-100"}`}>
           <div className="animation flex text-red-300 whitespace-nowrap my-2 mx-2 p-2">DONOS: 100$ / 231$ /234$ / 54359$ / 453$ / 100$ / 231$ /234$ / 54359$ / 453$</div>
         </div>
@@ -242,6 +233,14 @@ export default function Home() {
           {messages?.map((e:any) => 
             <div className="flex gap-2 w-full px-4 py-1 m-0 md:m-1 rounded-lg border-[0px] border-black mx-auto break-all overflow-hidden md:mx-0" key={e.timestamp}><div style={{ color: e.color }} className="font-semibold no-wrap whitespace-nowrap">{e.name}:</div> {e.text}</div>
           )}
+        </div>
+        <div className={`flex flex-row items-center justify-center gap-2 w-full text-left px-2 text-xl border-t-[1px] ${dark ? "border-zinc-500" : ""}`}>
+          <button className="px-2 rounded-md" onClick={playMusic}>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="48">
+            <path d="M8 5v14l11-7z" fill="currentColor"/>
+          </svg>
+          </button>
+          <input type="range" min="0" max="100" value={volume} className="w-[100%] transition-all slider" onChange={(e:any) => setVolume(e.target.value)}></input>
         </div>
         <div className={`${dark ? "border-t-[1px] pt-3 border-zinc-500 bg-zinc-900 w-full h-[200px] md:h-[7%] flex flex-row md:flex-col gap-0 md:gap-1 px-2" : "border-t-[1px] pt-3 bg-zinc-50 w-full h-[200px] md:h-[7%] flex flex-row md:flex-col gap-0 md:gap-1 px-2"}`}>
           <input className={`${dark ? " mx-1 md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-1 bg-zinc-700" : "mx-1 md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-1 bg-zinc-200"}`} placeholder="Talk to waifu!" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onSubmit={sendButton}></input>
