@@ -156,13 +156,13 @@ export default function Home() {
 
   return (
     <main className={`${dark ? `flex flex-col w-full min-h-screen md:overflow-hidden md:h-screen bg-zinc-900 text-white ${loading ? "overflow-y-hidden" : "overflow-visible"}` : `flex flex-col w-full min-h-screen ${opened? "h-screen overflow-hidden" : "overflow-visible"} md:overflow-hidden md:h-screen bg-zinc-100 text-black ${loading ? "overflow-y-hidden" : "overflow-visible"}`}`}>
-      <div className={`${loading? "absolute flex w-full h-[130%] md:h-screen bg-white z-[1000] overflow-hidden" : "hidden"}`}>
+      <div className={`${loading? "absolute flex w-full h-[160%] md:h-screen bg-white z-[1000] overflow-hidden" : "hidden"}`}>
         <div className="loading z-[1000] my-auto mx-auto"></div>
       </div>
       <Navbar darkmode={dark}></Navbar>
       <audio src={"/chill.mp3"} ref={audioRef}></audio>
       <div className={`w-full min-h-screen md:h-screen flex flex-col md:overflow-hidden md:flex-row ${opened? "h-full overflow-y-hidden" : ""} ${loading ? "overflow-hidden" : "overflow-visible overflow-y-visible"} ${dark ? "bg-zinc-900" : "bg-zinc-100"}`}>
-      <div className={`${opened ? `w-full md:w-[15%] absolute z-[10000] h-[130%] overflow-hidden py-4 px-1 pt-2 md: md:opacity-100 md:z-50 md:!static opacity-100 h-0 md:h-screen z-50 md:border-r-[1px] overflow-y-hidden ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-200"}` : "z-1000 md:flex md:opacity-100 h-20 md:h-screen md:z-50 w-[90px] p-4 md:p-1 justify-center pt-2 opacity-100 :z-[-10]"}`}>
+      <div className={`${opened ? `w-full md:w-[15%] absolute z-[10000] h-fit overflow-hidden py-4 px-1 pt-2 md: md:opacity-100 md:z-50 md:!static opacity-100 h-0 md:h-screen z-50 md:border-r-[1px] overflow-y-hidden ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-200"}` : "z-1000 md:flex md:opacity-100 h-20 md:h-screen md:z-50 w-[90px] p-4 md:p-1 justify-center pt-2 opacity-100 :z-[-10]"}`}>
         <div className="flex flex-col">
           <div className="w-full flex flex-row justify-between items-center">
             <h1 className={`${opened ? "visible font-semibold" : "hidden opacity-0"}`}>Recommended</h1>
@@ -193,7 +193,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className={`w-full md:w-[75%] md:h-[90%]  ${opened ? "h-[500px]" : "h-[600px]"}`}>
+      <div className={`w-full md:w-[75%] md:h-[90%]  ${opened ? "mt-20 h-[600px]" : "h-[600px]"}`}>
         <div className={`${opened? "flex w-full h-[500px] md:h-[90%] my- border-[0px] border-black rounded- overflow-hidden bg-[url('/house.png')]" : "flex flex-grow w-full h-[550px] md:h-[86%] my-auto border-[0px] border-black rounded- mx- overflow-hidden bg-white bg-[url('/house.png')]"}`}>
           <div className="flex flex-row justify- absolute md:w-[64%] w-full font-semibold">
             <div className="m-2 text-white rounded-sm p-2 px-4 bg-red-600 font-semibold">Live</div>
