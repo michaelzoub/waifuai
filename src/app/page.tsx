@@ -142,8 +142,7 @@ export default function Home() {
       }
   }
 
-  function playMusic() {
-    setPlay((e: boolean) => !e)
+  useEffect(() => {
     const audio = audioRef.current
     if (play) {
       audio.src = "/chill.mp3"
@@ -152,23 +151,24 @@ export default function Home() {
     } else {
       audio?.pause()
     }
-  }
+  }, [play])
+
 
   return (
-    <main className={`${dark ? `flex flex-col w-full min-h-screen md:overflow-hidden md:h-screen bg-zinc-900 text-white ${loading ? "overflow-hidden" : "overflow-visible"}` : `flex flex-col w-full min-h-screen overflow-visible md:overflow-hidden md:h-screen bg-zinc-100 text-black ${loading ? "overflow-hidden" : "overflow-visible"}`}`}>
+    <main className={`${dark ? `flex flex-col w-full min-h-screen md:overflow-hidden md:h-screen bg-zinc-900 text-white ${loading ? "overflow-y-hidden" : "overflow-visible"}` : `flex flex-col w-full min-h-screen ${opened? "h-screen overflow-hidden" : "overflow-visible"} md:overflow-hidden md:h-screen bg-zinc-100 text-black ${loading ? "overflow-y-hidden" : "overflow-visible"}`}`}>
       <div className={`${loading? "absolute flex w-full h-screen bg-white z-[1000] overflow-hidden" : "hidden"}`}>
         <div className="loading z-[1000] my-auto mx-auto"></div>
       </div>
       <Navbar darkmode={dark}></Navbar>
       <audio src={"/chill.mp3"} ref={audioRef}></audio>
-      <div className={`w-full min-h-screen md:h-screen flex flex-col md:overflow-hidden md:flex-row ${loading ? "overflow-hidden" : "overflow-visible overflow-y-visible"} ${dark ? "bg-zinc-900" : "bg-zinc-100"}`}>
-      <div className={`${opened ? `w-full md:w-[15%] absolute z-[10000] h-screen py-4 px-1 pt-2 md: md:opacity-100 md:z-50 md:!static opacity-100 h-0 md:h-screen z-50 md:border-r-[1px] overflow-hidden ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-200"}` : "z-1000 md:flex md:opacity-100 h-20 md:h-screen md:z-50 w-[90px] p-4 md:p-1 justify-center pt-2 opacity-100 :z-[-10]"}`}>
+      <div className={`w-full min-h-screen md:h-screen flex flex-col md:overflow-hidden md:flex-row ${opened? "h-full overflow-y-hidden" : ""} ${loading ? "overflow-hidden" : "overflow-visible overflow-y-visible"} ${dark ? "bg-zinc-900" : "bg-zinc-100"}`}>
+      <div className={`${opened ? `w-full md:w-[15%] absolute z-[10000] h-screen overflow-hidden py-4 px-1 pt-2 md: md:opacity-100 md:z-50 md:!static opacity-100 h-0 md:h-screen z-50 md:border-r-[1px] overflow-y-hidden ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-200"}` : "z-1000 md:flex md:opacity-100 h-20 md:h-screen md:z-50 w-[90px] p-4 md:p-1 justify-center pt-2 opacity-100 :z-[-10]"}`}>
         <div className="flex flex-col">
           <div className="w-full flex flex-row justify-between items-center">
             <h1 className={`${opened ? "visible font-semibold" : "hidden opacity-0"}`}>Recommended</h1>
             <button className="w-fit p-1 rounded-lg transition delay-150 ease-in-out hover:text-zinc-400" onClick={() => setOpened((e) => !e)}>
               <motion.div animate={{rotate: opened ? 180 : 0}}>
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
                   <path d="M8 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
                 </svg>
               </motion.div>
@@ -224,7 +224,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className={`w-full md:w-[20%] h-[350px] md:mt-[0px] mt-[-30px] md:h-[97%] pb-4 my-auto z-50 border-l-[0px] md:border-l-[1px] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-100 md:bg-zinc-50"}`}>
+      <div className={`w-full md:w-[20%] h-[450px] md:mt-[0px] mt-[-30px] md:h-[97%] pb-4 my-auto z-50 border-l-[0px] md:border-l-[1px] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-100 md:bg-zinc-50"}`}>
         <div className={`${dark ? "w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-700" : "w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-100"}`}>
           <div className="animation flex text-red-300 whitespace-nowrap my-2 mx-2 p-2">DONOS: 100$ / 231$ /234$ / 54359$ / 453$ / 100$ / 231$ /234$ / 54359$ / 453$</div>
         </div>
@@ -235,10 +235,17 @@ export default function Home() {
           )}
         </div>
         <div className={`flex flex-row items-center justify-center gap-2 w-full text-left px-2 text-xl border-t-[1px] ${dark ? "border-zinc-500" : ""}`}>
-          <button className="px-2 rounded-md" onClick={playMusic}>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="48">
-            <path d="M8 5v14l11-7z" fill="currentColor"/>
-          </svg>
+          <button className="px-2 rounded-md" onClick={() => setPlay((e: boolean) => !e)}>
+            {
+              !play?           
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="48">
+              <path d="M8 5v14l11-7z" fill="currentColor"/>
+            </svg> : 
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="48">
+              <rect x="6" y="5" width="4" height="14" fill="currentColor"/>
+              <rect x="14" y="5" width="4" height="14" fill="currentColor"/>
+            </svg>
+            }
           </button>
           <input type="range" min="0" max="100" value={volume} className="w-[100%] transition-all slider" onChange={(e:any) => setVolume(e.target.value)}></input>
         </div>
