@@ -157,7 +157,7 @@ export default function Home() {
   return (
     <main className={`${dark ? `flex flex-col w-full min-h-screen md:overflow-hidden md:h-screen bg-zinc-900 text-white ${loading ? "overflow-y-hidden" : "overflow-visible"}` : `flex flex-col w-full min-h-screen ${opened? "h-screen overflow-hidden" : "overflow-visible"} md:overflow-hidden md:h-screen bg-zinc-100 text-black ${loading ? "overflow-y-hidden" : "overflow-visible"}`}`}>
       <div className={`${loading? "absolute flex w-full h-[160%] md:h-screen bg-white z-[1000] overflow-hidden" : "hidden"}`}>
-        <div className="loading z-[1000] my-auto mx-auto"></div>
+        <div className="loading z-[1000] mt-[40%] md:my-auto mx-auto"></div>
       </div>
       <Navbar darkmode={dark}></Navbar>
       <audio src={"/chill.mp3"} ref={audioRef}></audio>
@@ -193,7 +193,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className={`w-full md:w-[75%] md:h-[90%]  ${opened ? "mt-20 h-[600px]" : "h-[600px]"}`}>
+      <div className={`w-full md:w-[75%] md:h-[90%]  ${opened ? "h-[500px]" : "h-[600px]"}`}>
         <div className={`${opened? "flex w-full h-[500px] md:h-[90%] my- border-[0px] border-black rounded- overflow-hidden bg-[url('/house.png')]" : "flex flex-grow w-full h-[550px] md:h-[86%] my-auto border-[0px] border-black rounded- mx- overflow-hidden bg-white bg-[url('/house.png')]"}`}>
           <div className="flex flex-row justify- absolute md:w-[64%] w-full font-semibold">
             <div className="m-2 text-white rounded-sm p-2 px-4 bg-red-600 font-semibold">Live</div>
