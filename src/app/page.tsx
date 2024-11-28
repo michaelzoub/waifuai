@@ -12,6 +12,7 @@ import Navbar from "./components/navbar";
 import { kol } from "./data/kols";
 import { useAtom } from "jotai";
 import { darker } from "./components/navbar";
+import { motion } from "framer-motion";
 
 
 export default function Home() {
@@ -36,9 +37,17 @@ export default function Home() {
   const [follow, setFollow] = useState(false)
   const [volume, setVolume] = useState(90)
   const [play, setPlay] = useState(false)
+  const [polling, setPolling] = useState(false)
+  const [time, setTime] = useState(0)
 
   const containerRef: any = useRef(null)
   const audioRef: any = useRef(null)
+  const scrollRef:any = useRef(null)
+
+  const pollObject = {
+    type: "poll",
+    questions: ["Perform a dance", "Send it to the moon", "Play a user's song"]
+  }
 
   useEffect(() => {
 
@@ -87,6 +96,23 @@ export default function Home() {
     const audio = audioRef.current
     audio.volume = (volume / 100)
   }, [volume])
+
+  useEffect(() => {
+
+    setInterval(() => {
+      setPolling((e:any) => !e)
+      if (polling == false) {
+        //delete the poll in mongodb
+        socket.emit("poll", pollObject)
+      }
+    }, 20 * 60)
+  }, [])
+
+  useEffect(() => {
+    setInterval(() => {
+      setTime((e) => e + 1)
+    }, 1000)
+  }, [])
 
   function sendButton(event: any) {
     const amountOfCharacters = newMessage.split("")
@@ -151,22 +177,23 @@ export default function Home() {
         <div className="flex flex-col">
           <div className="w-full flex flex-row justify-between items-center">
             <h1 className={`${opened ? "visible font-semibold" : "hidden opacity-0"}`}>Recommended</h1>
-            <button className="w-fit p-1 rounded-lg transition delay-150 ease-in-out hover:text-zinc-400" onClick={() => setOpened((e) => !e)}>{opened ? <div>◄</div> : <div>►</div>}</button>
+            <button className="w-fit p-1 rounded-lg transition delay-150 ease-in-out hover:text-zinc-400" onClick={() => setOpened((e) => !e)}><motion.div animate={{rotate: opened ? 180 : 0}}>►</motion.div></button>
           </div>
           <div className={`${opened ? "visible flex flex-col mt-4" : "visible pt-4"}`}>
             <div className="flex flex-col gap-2" key="list">
               {
                 kol.map((e) => 
-                  <Link href={e.link} className={`flex flex-row gap-2 p-1 rounded-md overflow-hidden ${dark ? "hover:bg-zinc-700" : "hover:bg-zinc-300"}`} key={e.name}>
+                  <Link href={e.link} target="_blank" className={`flex flex-row gap-2 p-1 rounded-md overflow-hidden ${dark ? "hover:bg-zinc-700" : "hover:bg-zinc-300"}`} key={e.name}>
                     <Image src={e.profilepic} alt="pfp" width={30} height={30} className={`w-10 h-10 rounded-full ${opened ? "visible" : "visible"}`}></Image>
                     <div className={`flex flex-col text-sm ${opened ? "visible" : "hidden"}`} key={e.link}>
                       <h1 className={`text-lg font-semibold ${opened ? "visible" : "visible"}`}>{e.name}</h1>
                       <h1 className={`text-pink-500 ${opened ? "visible" : "visible"}`}>{e.at}</h1>
-                      <h1 className={`${opened ? "visible" : "visible"}`}>{e.followers}</h1>
+                      <h1 className={`text-sm text-zinc-400 ${opened ? "visible" : "visible"}`}>{e.followers}</h1>
                     </div>
                   </Link>
                 )
               }
+              <button className="mx-auto text-pink-500 m-4 transition delay-150 ease-in-out hover:text-pink-400"></button>
             </div>
           </div>
         </div>
@@ -189,7 +216,7 @@ export default function Home() {
               <div className={`w-fit flex flex-row justify-between items-center ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
                 <div className="m-2 text-red-500 font-semibold text-sm m-2">👁 {viewers} viewers</div>
                 <div className="text-sm">•</div>
-                <div className="m-2 font-medium text-sm m-2">4:08:22</div>
+                <div className="m-2 font-medium text-sm m-2">{time <= 9 ? (<span>0{Math.floor(time / 60)}</span>) : (<span>{Math.floor(time / 60)}</span>)}:{time <= 9 ? <span>0{time % 60}</span> : <span>{time % 60}</span>}</div>
               </div>
             </div>
           </div>

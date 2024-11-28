@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { atom, useAtom } from 'jotai'
 
 interface NavbarProps {
@@ -10,7 +10,16 @@ interface NavbarProps {
 
 export default function Navbar({darkmode}: NavbarProps) {
 
-    const [dark, setDark] = useAtom(darker)
+  const [dark, setDark] = useAtom(darker)
+
+  useEffect(() => {
+    const currentStorage: string | null = localStorage.getItem("darkmode")
+    setDark(currentStorage === "true")
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem("darkmode", dark.toString())
+  }, [dark])
 
     return (
         <header className={`${dark? "z-[500] flex flex-row w-full h-[6%] bg-zinc-900 z-100 justify-between py-3 px-2 text-white" : "z-[500] flex flex-row w-full h-[6%] bg-zinc-50 z-100 justify-between py-3 px-2 text-black"}`}>

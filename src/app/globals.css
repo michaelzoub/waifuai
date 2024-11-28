@@ -14,6 +14,15 @@
   }
 }
 
+.live2d {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
 .slider {
   -webkit-appearance: none; /* Remove default appearance in WebKit browsers */
   appearance: none; /* Standardize removal of default appearance */

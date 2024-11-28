@@ -16,7 +16,7 @@ const Live2D = () => {
       if (typeof window !== 'undefined' && window.loadlive2d) {
         window.loadlive2d(
           "live2d",
-          "https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/haru_seifuku/model.json" // Ensure this path is correct
+          "https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/r93_3501/model.json" // Ensure this path is correct
         );
       }
     };
@@ -34,8 +34,8 @@ const Live2D = () => {
   }
 
   return (
-    <div className="mt-[-300px] md:mt-[-200px] ml-[-150px] my-auto md:mx-auto z-50">
-      <canvas id="live2d" width="800" height="1600"></canvas>
+    <div className="flex items-center justify-center ml-[-600px] md:ml-[-300px] mt-[-50px] md:mt-[0px] mx-auto my-auto md:mx-auto z-50">
+      <canvas id="live2d" width="1400" height="1200" className="mx-auto"></canvas>
     </div>
   );
 };
