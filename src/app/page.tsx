@@ -56,6 +56,10 @@ export default function Home() {
 
   useEffect(() => {
 
+    if (window.innerWidth <= 768) {
+      setOpened(false)
+    }
+
     const waifuNumber = Math.floor(Math.random() * 50)
     const colorNumber = Math.floor(Math.random() * 10)
     setWaifuName(waifuNames[waifuNumber])
@@ -241,7 +245,7 @@ export default function Home() {
           <div className="flex flex-row justify- absolute md:w-[64%] w-full font-semibold">
             <div className="m-2 text-white rounded-sm p-2 px-4 bg-red-600 font-semibold">Live</div>
           </div>
-          <div className="relative w-full h-full">
+          <div className="relative w-full h-full mt-28 md:0">
             <Live2D />
           </div>
           <div className={`${thinking? "absolute text-white rounded-full p-2 w-fit h-fit bg-orange-400 border-[2px] border-zinc-300 m-20" : "hidden"}`}>Thinking...</div>
