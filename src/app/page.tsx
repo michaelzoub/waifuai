@@ -173,14 +173,14 @@ export default function Home() {
 
 
   return (
-    <main className={`${dark ? `flex flex-col w-full min-h-screen md:overflow-hidden md:h-screen bg-zinc-900 text-white ${loading ? "overflow-y-hidden" : "overflow-visible"}` : `flex flex-col w-full min-h-screen ${opened? "h-screen overflow-hidden" : "overflow-visible"} md:overflow-hidden md:h-screen bg-zinc-100 text-black ${loading ? "overflow-y-hidden" : "overflow-visible"}`}`}>
+    <main className={`${dark ? `flex flex-col w-full min-h-screen md:overflow-hidden md:h-screen bg-zinc-900 text-white ${loading ? "overflow-y-hidden" : "overflow-visible"}` : `flex flex-col w-full min-h-screen md:overflow-hidden md:h-screen bg-zinc-100 text-black ${loading ? "overflow-y-hidden" : "overflow-visible"}`}`}>
       <div className={`${loading? "absolute flex w-full h-[160%] md:h-screen bg-white z-[1000] overflow-hidden" : "hidden"}`}>
         <div className="loading z-[1000] mt-[40%] md:my-auto mx-auto"></div>
       </div>
       <Navbar darkmode={dark}></Navbar>
       <audio src={"/night.mp3"} ref={audioRef}></audio>
       <div className={`w-full min-h-screen md:h-[94%] flex flex-col md:overflow-hidden md:flex-row ${opened? "h-[94%] overflow-y-hidden" : ""} ${loading ? "overflow-hidden" : "overflow-visible overflow-y-visible"} ${dark ? "bg-zinc-900" : "bg-zinc-100"}`}>
-      <section className={`${opened ? `w-full md:w-[15%] absolute z-[10000] h-full overflow- py-4 px-1 pt-2 md: md:opacity-100 md:z-50 md:!static opacity-100 md:h-full z-50 md:border-r-[1px] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-200"}` : `z-1000 md:flex md:opacity-100 h-20 md:h-full md:z-50 w-[90px] p-4 md:p-1 justify-center pt-2 opacity-100 :z-[-10] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-200"}`}`}>
+      <section className={`${opened ? `w-full md:w-[15%] absolute z-[10000] h-full overflow- py-4 px-1 pt-2 md: md:opacity-100 md:z-50 md:!static opacity-100 md:h-full z-50 md:border-r-[1px] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-100 md:bg-zinc-200"}` : `z-1000 md:flex md:opacity-100 h-20 md:h-full md:z-50 w-[90px] p-4 md:p-1 justify-center pt-2 opacity-100 :z-[-10] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-100 md:bg-zinc-200"}`}`}>
         <div className="h-[95%] flex flex-col justify-between">
           <div>
           <div className="w-full flex flex-row justify-between items-center">

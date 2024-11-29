@@ -1,0 +1,1 @@
+export const slurs = ["fuck", "bitch", "whore", "hoe", "nigger", "nigga", ]
