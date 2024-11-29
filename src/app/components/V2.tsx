@@ -17,7 +17,7 @@ const Live2D = () => {
     setMounted(true);
 
     const script = document.createElement("script");
-    script.src = "https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/live2d.min.js"
+    script.src = "https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/live2d.min.js?=" + new Date().getTime()
     document.body.appendChild(script)
     script.onload = () => {
       const load2dlive = async () => {
