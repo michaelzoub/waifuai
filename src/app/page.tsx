@@ -181,7 +181,7 @@ export default function Home() {
       <audio src={"/night.mp3"} ref={audioRef}></audio>
       <div className={`w-full min-h-screen md:h-[94%] flex flex-col md:overflow-hidden md:flex-row ${opened? "h-[94%] overflow-y-hidden" : ""} ${loading ? "overflow-hidden" : "overflow-visible overflow-y-visible"} ${dark ? "bg-zinc-900" : "bg-zinc-100"}`}>
       <section className={`${opened ? `w-full md:w-[15%] absolute z-[10000] h-full overflow- py-4 px-1 pt-2 md: md:opacity-100 md:z-50 md:!static opacity-100 md:h-full z-50 md:border-r-[1px] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-100 md:bg-zinc-200"}` : `z-1000 md:flex md:opacity-100 h-20 md:h-full md:z-50 w-[90px] p-4 md:p-1 justify-center pt-2 opacity-100 :z-[-10] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-100 md:bg-zinc-200"}`}`}>
-        <div className="h-[95%] flex flex-col justify-between">
+        <div className="h-[95%] flex flex-col justify-start md:justify-between">
           <div>
           <div className="w-full flex flex-row justify-between items-center">
             <h1 className={`${opened ? "visible font-semibold" : "hidden opacity-0"}`}>Recommended</h1>
