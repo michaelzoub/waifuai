@@ -67,7 +67,7 @@ const Live2D = () => {
   }
 
   return (
-    <div className="flex items-center justify-center ml-[-300px] md:ml-[-600px] md:ml-[-300px] mt-[-0px] md:mt-[0px] mx-auto my-auto md:mx-auto z-50">
+    <div className="flex items-center justify-center ml-[-300px] md:ml-[-600px] md:ml-[-300px] mt-[50px] md:mt-[0px] mx-auto my-auto md:mx-auto z-50">
       <canvas id="live2d" width="1400" height="1200" className="mx-auto w-full"></canvas>
     </div>
   );
