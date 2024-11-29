@@ -23,7 +23,7 @@ const Live2D = () => {
       const load2dlive = async () => {
         if (typeof window !== 'undefined' && window.loadlive2d) {
           window.loadlive2d(
-            canvasRef.current,
+            "live2d",
             "https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/r93_3501/model.json"
           );
         console.log("pre check")
