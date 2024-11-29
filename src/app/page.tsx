@@ -20,7 +20,14 @@ export default function Home() {
 
   const prod = "wss://waifuainode-production.up.railway.app/" //"http://localhost:3001"
 
-  const socket = io(prod);
+  const socket = io(prod, {
+    reconnection: true, 
+    reconnectionAttempts: 5, 
+    reconnectionDelay: 1000, 
+    reconnectionDelayMax: 5000,
+    timeout: 20000, 
+  });
+
 
   const [messages, setMessages] = useState<any[]>([])
   const [newMessage, setNewMessage] = useState("")
