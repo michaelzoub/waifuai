@@ -18,7 +18,7 @@ import { donors } from "./data/donors";
 
 export default function Home() {
 
-  const prod = "https://waifuainode-production.up.railway.app/" //"http://localhost:3001"
+  const prod = "wss://waifuainode-production.up.railway.app/" //"http://localhost:3001"
 
   const socket = io(prod);
 
@@ -46,11 +46,6 @@ export default function Home() {
   const containerRef: any = useRef(null)
   const audioRef: any = useRef(null)
   const scrollRef:any = useRef(null)
-
-  const pollObject = {
-    type: "poll",
-    questions: ["Perform a dance", "Send it to the moon", "Play a user's song"]
-  }
 
   useEffect(() => {
 
