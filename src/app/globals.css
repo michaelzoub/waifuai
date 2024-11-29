@@ -117,3 +117,46 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.custom-scrollbar {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: transparent transparent; /* Firefox */
+
+  /* Smooth scroll behavior */
+  scroll-behavior: smooth;
+}
+
+/* Chrome, Edge, and Safari */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px; /* Adjust scrollbar width */
+  height: 8px; /* Adjust scrollbar height (horizontal scrollbar) */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent; /* Make the track invisible */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.4); /* Semi-transparent scrollbar */
+  border-radius: 50px; /* Fully rounded scrollbar */
+  transition: background 0.3s; /* Smooth color transition */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.6); /* Darker on hover */
+}
+
+/* Hide scrollbar when not scrolling */
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: transparent;
+  transition: background 0.3s;
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.4); /* Show on hover */
+}
+
+.text-2xs {
+  font-size: 0.65rem; /* 12px */
+  line-height: 1rem; /* 16px */
+}

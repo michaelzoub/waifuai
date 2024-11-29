@@ -11,7 +11,7 @@ export async function sendMsgToOpenAI(message: string) {
         messages: [
             {
                 role: "system",
-                content: "You're a cute anime waifu. Respond in the cutest way possible"
+                content: "You're a cute anime waifu. Respond in the cutest way possible. YOUR NAME IS ASUNA."
             },
             {
                 role: "user",

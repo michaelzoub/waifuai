@@ -13,7 +13,8 @@ import { kol } from "./data/kols";
 import { useAtom } from "jotai";
 import { darker } from "./components/navbar";
 import { motion } from "framer-motion";
-
+import { slurs } from "./data/slurs";
+import { donors } from "./data/donors";
 
 export default function Home() {
 
@@ -26,7 +27,7 @@ export default function Home() {
   const [error, setError] = useState("")
   const [lipsync, setLipsync] = useState(false)
   const [thinking, setThinking] = useState(false)
-  const [opened, setOpened] = useState(false)
+  const [opened, setOpened] = useState(true)
   const [ca, setCa] = useState(false)
   const [viewers, setViewers] = useState<number>(0)
   //const [dark, setDark] = useState(false)
@@ -35,10 +36,12 @@ export default function Home() {
   const [waifuName, setWaifuName] = useState("")
   const [nameColor, setNameColor] = useState("")
   const [follow, setFollow] = useState(false)
-  const [volume, setVolume] = useState(90)
+  const [volume, setVolume] = useState(60)
   const [play, setPlay] = useState(false)
   const [polling, setPolling] = useState(false)
   const [time, setTime] = useState(0)
+  const [duration, setDuration] = useState(0); 
+  const [currentTime, setCurrentTime] = useState(0); 
 
   const containerRef: any = useRef(null)
   const audioRef: any = useRef(null)
@@ -98,6 +101,14 @@ export default function Home() {
   }, [volume])
 
   useEffect(() => {
+
+    const audio = audioRef.current
+    const updateDuration = () => setDuration(audio.duration)
+    const updateCurrentTime = () => setCurrentTime(audio.currentTime)
+    audio.volume = (volume / 100)
+    audio.addEventListener("loadedmetadata", updateDuration)
+    audio.addEventListener("timeupdate", updateCurrentTime)
+
     setInterval(() => {
       setTime((e) => e + 1)
     }, 1000)
@@ -107,7 +118,7 @@ export default function Home() {
     const amountOfCharacters = newMessage.split("")
     console.log(amountOfCharacters.length)
     if (amountOfCharacters.length < 100) {
-      if (event.key == "Enter" || event.type == "click") {
+      if ((event.key == "Enter" || event.type == "click") && !slurs.some(slur => newMessage.toLowerCase().includes(slur.toLowerCase()))) {
         setThinking(true)
         socket.emit("message", { text: newMessage, timestamp: Date.now(), name: waifuName, color: nameColor })
         console.log(nameColor)
@@ -137,15 +148,22 @@ export default function Home() {
         console.log(messages)
   
       } else {
-        setError("PLS LESS CHARACTERS")
+        setError("Error")
+        window.alert("No slurs.")
       }
       }
+  }
+
+  function handleSliderChange(e:any) {
+    const newTime = e.target.value;
+    setCurrentTime(newTime);
+    audioRef.current.currentTime = newTime;
   }
 
   useEffect(() => {
     const audio = audioRef.current
     if (play) {
-      audio.src = "/chill.mp3"
+      audio.src = "/night.mp3"
       audio.volume = (volume / 100)
       audio?.play()
     } else {
@@ -160,16 +178,17 @@ export default function Home() {
         <div className="loading z-[1000] mt-[40%] md:my-auto mx-auto"></div>
       </div>
       <Navbar darkmode={dark}></Navbar>
-      <audio src={"/chill.mp3"} ref={audioRef}></audio>
-      <div className={`w-full min-h-screen md:h-screen flex flex-col md:overflow-hidden md:flex-row ${opened? "h-screen overflow-y-hidden" : ""} ${loading ? "overflow-hidden" : "overflow-visible overflow-y-visible"} ${dark ? "bg-zinc-900" : "bg-zinc-100"}`}>
-      <div className={`${opened ? `w-full md:w-[15%] absolute z-[10000] h-screen overflow- py-4 px-1 pt-2 md: md:opacity-100 md:z-50 md:!static opacity-100 md:h-screen z-50 md:border-r-[1px] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-200"}` : "z-1000 md:flex md:opacity-100 h-20 md:h-screen md:z-50 w-[90px] p-4 md:p-1 justify-center pt-2 opacity-100 :z-[-10]"}`}>
-        <div className="flex flex-col">
+      <audio src={"/night.mp3"} ref={audioRef}></audio>
+      <div className={`w-full min-h-screen md:h-[94%] flex flex-col md:overflow-hidden md:flex-row ${opened? "h-[94%] overflow-y-hidden" : ""} ${loading ? "overflow-hidden" : "overflow-visible overflow-y-visible"} ${dark ? "bg-zinc-900" : "bg-zinc-100"}`}>
+      <section className={`${opened ? `w-full md:w-[15%] absolute z-[10000] h-full overflow- py-4 px-1 pt-2 md: md:opacity-100 md:z-50 md:!static opacity-100 md:h-full z-50 md:border-r-[1px] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-200"}` : `z-1000 md:flex md:opacity-100 h-20 md:h-full md:z-50 w-[90px] p-4 md:p-1 justify-center pt-2 opacity-100 :z-[-10] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-200"}`}`}>
+        <div className="h-[95%] flex flex-col justify-between">
+          <div>
           <div className="w-full flex flex-row justify-between items-center">
             <h1 className={`${opened ? "visible font-semibold" : "hidden opacity-0"}`}>Recommended</h1>
             <button className="w-fit p-1 rounded-lg transition delay-150 ease-in-out hover:text-zinc-400" onClick={() => setOpened((e) => !e)}>
               <motion.div animate={{rotate: opened ? 180 : 0}}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
-                  <path d="M8 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none"/>
+                  <path d="M8 5l7 7-7 7" stroke="currentColor" strokeWidth="2" fill="none"/>
                 </svg>
               </motion.div>
             </button>
@@ -191,14 +210,38 @@ export default function Home() {
               <button className="mx-auto text-pink-500 m-4 transition delay-150 ease-in-out hover:text-pink-400"></button>
             </div>
           </div>
+          </div>
+          <div className={`flex flex-col items-center justify- bg-pink- mt-[0px] rounded-full py-1 gap-0 w-full text-left px- text-xl h-fit ${opened ? "visible" : "hidden"} ${dark ? "border-zinc-500" : ""}`}>
+            <div className="flex flex-row items-center">
+              <div className="text-2xs flex flex-row">
+                <span>{Math.floor(currentTime / 60).toString().padStart(2, "0")}</span> : 
+                <span>{Math.floor(currentTime % 60).toString().padStart(2, "0")}</span>
+              </div>
+              <button className="px-2 rounded-md" onClick={() => setPlay((e: boolean) => !e)}>
+                {
+                  !play?           
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="48">
+                  <path d="M8 5v14l11-7z" fill="currentColor"/>
+                </svg> : 
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="48">
+                  <rect x="6" y="5" width="4" height="14" fill="currentColor"/>
+                  <rect x="14" y="5" width="4" height="14" fill="currentColor"/>
+                </svg>
+                }
+              </button>
+              <input type="range" min="0" max={duration} step="0.1" value={currentTime} onChange={handleSliderChange} className="w-[100%] transition-all slider"></input>
+            </div>
+          </div>
         </div>
-      </div>
-      <div className={`w-full md:w-[75%] md:h-[90%]  ${opened ? "h-[200px]" : "h-[600px]"}`}> {/* used to be h-[500px] */}
-        <div className={`${opened? "flex w-full h-[500px] md:h-[90%] my- border-[0px] border-black rounded- overflow-hidden bg-[url('/house.png')]" : "flex flex-grow w-full h-[550px] md:h-[86%] my-auto border-[0px] border-black rounded- mx- overflow-hidden bg-white bg-[url('/house.png')]"}`}>
+      </section>
+      <section className={`w-full md:h-[90%]  ${opened ? "h-[200px] md:w-[70%]" : "md:w-[74%] h-[600px]"}`}> {/* used to be h-[500px] */}
+        <div className={`${opened? "flex w-full h-[500px] md:h-[90%] my- border-[0px] border-black rounded- overflow-hidden bg-[url('/house.png')] bg-cover bg-fixed" : "static flex flex-grow w-full h-[550px] md:h-[86%] my-auto border-[0px] border-black rounded- mx- overflow-hidden bg-white bg-[url('/house.png')] bg-cover bg-fixed"}`}>
           <div className="flex flex-row justify- absolute md:w-[64%] w-full font-semibold">
             <div className="m-2 text-white rounded-sm p-2 px-4 bg-red-600 font-semibold">Live</div>
           </div>
-          <Live2D></Live2D>
+          <div className="relative w-full h-full">
+            <Live2D />
+          </div>
           <div className={`${thinking? "absolute text-white rounded-full p-2 w-fit h-fit bg-orange-400 border-[2px] border-zinc-300 m-20" : "hidden"}`}>Thinking...</div>
           <audio id="audio"></audio>
         </div>
@@ -211,53 +254,52 @@ export default function Home() {
               <div className={`w-fit flex flex-row justify-between items-center ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
                 <div className="m-2 text-red-500 font-semibold text-sm m-2">👁 {viewers} viewers</div>
                 <div className="text-sm">•</div>
-                <div className="m-2 font-medium text-sm m-2">{time <= 600 ? (<span>0{Math.floor(time / 60)}</span>) : (<span>{Math.floor(time / 60)}</span>)}:{time <= 9 ? <span>0{time % 60}</span> : <span>{time % 60}</span>}</div>
+                <div className="m-2 font-medium text-sm m-2">
+                  <span>{String(Math.floor(time / 60)).padStart(2, "0")}</span>:
+                  <span>{String(time % 60).padStart(2, "0")}</span>
+                </div>
               </div>
             </div>
           </div>
           <div className="flex flex-col items-center">
             <div className="flex flex-row justify-end text-white gap-2 m-2 text-sm items-center">
-              <Link href="https://x.com/asunagpt" className={`py-1 px-4 rounded-sm transition delay-150 ease-in-out ${follow ? "bg-zinc-300" : "bg-pink-400"}`} onClick={() => setFollow(true)} target="_blank">♥ Follow</Link>
+              <Link href="https://x.com/asunagpt" className={`py-1 px-4 rounded-sm transition delay-150 ease-in-out ${follow ? "bg-pink-500" : "bg-pink-500"}`} onClick={() => setFollow(true)} target="_blank">♥ Follow</Link>
               <button className="bg-zinc-300 py-1 px-4 rounded-sm ">Donate :)</button>
               <button className="bg-zinc-300 py-1 px-4 rounded-sm ">★ Subscribe</button>
             </div> 
           </div>
         </div>
-      </div>
-      <div className={`w-full md:w-[20%] h-[450px] md:mt-[0px] mt-[-30px] md:h-[97%] pb-4 my-auto z-50 border-l-[0px] md:border-l-[1px] ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-100 md:bg-zinc-50"}`}>
+      </section>
+      <section className={`w-full h-[450px] md:mt-[0px] mt-[-30px] md:h-[100%] pb-4 my-auto z-50 border-l-[0px] md:border-l-[1px] ${opened? " md:w-[20%]" : "md:w-[26%]"} ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-100 md:bg-zinc-50"}`}>
         <div className={`${dark ? "border-y-[1px] border-zinc-600 md:border-y-0 w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-700" : "border-y-[1px] border-zinc-300 md:border-y-0 w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-100"}`}>
-          <div className="animation flex text-red-300 whitespace-nowrap my-2 mx-2 p-2">DONOS: 100$ / 231$ /234$ / 54359$ / 453$ / 100$ / 231$ /234$ / 54359$ / 453$</div>
+          <div className="animation flex gap-1 text-red-300 whitespace-nowrap my-2 mx-2 p-2" key="donors">DONOS: 
+            {
+              donors.map((e:any) => 
+                <div className="flex flex-row gap-1">
+                  <div className="text-pink-500">{e.name}</div> : <div className="text-zinc-500">{e.amount}$</div>
+                </div>
+              )
+            }
+          </div>
         </div>
-        <div className="overflow-scroll h-[250px] md:h-[80%] w-full px-0 md:px-4" ref={containerRef} style={{flexDirection: 'column'}}>
+        <div className="overflow-y-scroll custom-scrollbar h-[250px] md:h-[82%] w-full px-0 md:px-4" ref={containerRef} style={{flexDirection: 'column'}}>
           <div className={`${messages ? "hidden" : "visible mx-auto my-auto"}`}>Loading...</div>
           {messages?.map((e:any) => 
             <div className="flex gap-2 w-full px-4 py-1 m-0 md:m-1 rounded-lg border-[0px] border-black mx-auto break-all overflow-hidden md:mx-0" key={e.timestamp}><div style={{ color: e.color }} className="font-semibold no-wrap whitespace-nowrap">{e.name}:</div> {e.text}</div>
           )}
         </div>
-        <div className={`flex flex-row items-center justify-center gap-2 w-full text-left px-2 text-xl border-t-[1px] ${dark ? "border-zinc-500" : ""}`}>
-          <button className="px-2 rounded-md" onClick={() => setPlay((e: boolean) => !e)}>
-            {
-              !play?           
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="48">
-              <path d="M8 5v14l11-7z" fill="currentColor"/>
-            </svg> : 
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="48">
-              <rect x="6" y="5" width="4" height="14" fill="currentColor"/>
-              <rect x="14" y="5" width="4" height="14" fill="currentColor"/>
-            </svg>
-            }
-          </button>
-          <input type="range" min="0" max="100" value={volume} className="w-[100%] transition-all slider" onChange={(e:any) => setVolume(e.target.value)}></input>
-        </div>
-        <div className={`${dark ? "border-t-[1px] pt-3 border-zinc-500 bg-zinc-900 w-full h-[200px] md:h-[7%] flex flex-row md:flex-col gap-0 md:gap-1 px-2" : "border-t-[1px] pt-3 bg-zinc-50 w-full h-[200px] md:h-[7%] flex flex-row md:flex-col gap-0 md:gap-1 px-2"}`}>
-          <input className={`${dark ? " mx-1 md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-1 bg-zinc-700" : "mx-1 md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-1 bg-zinc-200"}`} placeholder="Talk to waifu!" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onSubmit={sendButton}></input>
-          <div className="w-20 md:w-full flex flex-row justify-end md:justify-between h-fit">
-            <div></div>
-            <button className="text-white bg-pink-500 border-[2px] border-pink-300 p-1 px-4 text-sm rounded-md" onClick={sendButton}>Chat</button>
+        <div className={`${dark ? "border-t-[1px] pt-3 border-zinc-500 bg-zinc-900 w-full h-[100px] md:h-[6%] flex flex-row md:flex-col gap-0 md:gap-1 px-2" : "border-t-[1px] pt-3 bg-zinc-50 w-full h-[100px] md:h-[6%] flex flex-row md:flex-col gap-0 md:gap-1 px-2"}`}>
+          <div className="w-full flex flex-row items-center items-center justify-end h-full overflow-hidden">
+            <input className={`${dark ? "mx-auto md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-2 bg-zinc-700" : "mx-auto md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-2 bg-zinc-200"}`} placeholder="Talk to waifu!" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onSubmit={sendButton}></input>
+            <div className="absolute justify-end w-full md:w-fit flex flex-row my-auto overflow-hidden">
+              <button className="flex justify-end text-white bg-pink-500 border-[2px] border-pink-400 p-1 px-4 text-xs rounded-md m-1" onClick={sendButton}>↑</button>
+            </div>
           </div>
         </div>
-        <div className={`${error? "p-1 bg-red-500 border-[2px] border-red-400 w-fit m-1 rounded-md text-xs text-white" : "hidden"}`}>{error}</div>
-      </div>
+        <div className={`${error? "absolute w-full md:w-0 md:mt-0" : "hidden"}`}>
+          <div className={`${error? "ml-1 mx-auto p-1 px-3 bg-red-500 border-[2px] border-red-400 w-fit rounded-md text-xs text-white" : "hidden"}`}>{error}</div>
+        </div>
+      </section>
       </div>
     </main>
   );
