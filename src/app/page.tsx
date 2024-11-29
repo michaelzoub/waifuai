@@ -241,7 +241,7 @@ export default function Home() {
         </div>
       </section>
       <section className={`w-full md:h-[90%]  ${opened ? "h-[200px] md:w-[70%]" : "md:w-[74%] h-[600px]"}`}> {/* used to be h-[500px] */}
-        <div className={`${opened? "flex w-full h-[500px] md:h-[90%] my- border-[0px] border-black rounded- overflow-hidden bg-[url('/house.png')] bg-cover bg-fixed" : "static flex flex-grow w-full h-[550px] md:h-[86%] my-auto border-[0px] border-black rounded- mx- overflow-hidden bg-white bg-[url('/house.png')] bg-cover bg-fixed"}`}>
+        <div className={`${opened? "flex w-full h-[500px] md:h-[90%] my- border-[0px] border-black rounded- overflow-hidden bg-[url('/house.png')] bg-cover bg-fixed" : "static flex flex-grow w-full h-[550px] md:h-[86%] my-auto border-[0px] border-black rounded- mx- overflow-hidden bg-white bg-[url('/house.png')] md:bg-cover md:bg-fixed"}`}>
           <div className="flex flex-row justify- absolute md:w-[64%] w-full font-semibold">
             <div className="m-2 text-white rounded-sm p-2 px-4 bg-red-600 font-semibold">Live</div>
           </div>
