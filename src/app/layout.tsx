@@ -25,6 +25,30 @@ export const metadata: Metadata = {
   title: "ASUNA",
   description: "Your favorite waifu is streaming!",
   viewport: "width=device-width, initial-scale=1.0",
+  openGraph: {
+    title: "ASUNA",
+    description: "Your favorite waifu is streaming!",
+    images:
+      {
+        url: "/metaimage.png",
+        width: 1200,
+        height: 630,
+        alt: "Your favorite waifu is streaming!", 
+      },
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ASUNA",
+    description: "Your favorite waifu is streaming!",
+    site: "@asunagpt",
+    images:
+    {
+      url: "/metaimage.png",
+      width: 1200,
+      height: 630,
+      alt: "Your favorite waifu is streaming!", 
+    },
+  }
 };
 
 export default function RootLayout({
