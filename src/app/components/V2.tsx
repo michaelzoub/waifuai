@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 declare global {
   interface Window {
@@ -9,63 +9,58 @@ declare global {
 }
 
 const Live2D = () => {
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState(false)
+
+  const canvasRef = useRef<any>(null)
 
   useEffect(() => {
     setMounted(true);
 
-    // Dynamically load the Live2D script on the client
     const script = document.createElement("script");
-    script.src = "https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/live2d.min.js";
+    script.src = "https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/live2d.min.js"
+    document.body.appendChild(script)
     script.onload = () => {
-      // Ensure the Live2D library is loaded before using it
-      if (typeof window !== 'undefined' && window.loadlive2d) {
-        window.loadlive2d(
-          "live2d",
-          "https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/r93_3501/model.json"
-        );
-      console.log("pre check")
-      console.log("live2d :", window.live2DModel)
-      if (window.live2DModel) {
-        console.log("Animating mouth")
-        let mouthOpenValue = 0.5;
-        let direction = 0.02;
-
-        const animateMouth = () => {
-          // Oscillate mouth open value
-          mouthOpenValue += direction;
-          
-          // Reverse direction at peaks
-          if (mouthOpenValue > 0.5 || mouthOpenValue < 0) {
-            direction *= -1;
-          }
-
-          // Set mouth open parameter
-          // Note: The exact parameter name might vary between models
-          try {
-            window.live2DModel.setParamFloat('PARAM_MOUTH_OPEN_Y', mouthOpenValue);
-          } catch (error) {
-            console.error("Could not set mouth parameter:", error);
-          }
-
-          // Continue animation
-          requestAnimationFrame(animateMouth);
-        };
-
-        // Start mouth animation
-        animateMouth();
-      }
+      const load2dlive = async () => {
+        if (typeof window !== 'undefined' && window.loadlive2d) {
+          window.loadlive2d(
+            "live2d",
+            "https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/r93_3501/model.json"
+          );
+        console.log("pre check")
+        console.log("live2d :", window.live2DModel)
+        if (window.live2DModel) {
+          console.log("Animating mouth")
+          let mouthOpenValue = 0.5;
+          let direction = 0.02;
   
+          const animateMouth = () => {
+            mouthOpenValue += direction;
+            
+            if (mouthOpenValue > 0.5 || mouthOpenValue < 0) {
+              direction *= -1;
+            }
+  
+            try {
+              window.live2DModel.setParamFloat('PARAM_MOUTH_OPEN_Y', mouthOpenValue);
+            } catch (error) {
+              console.error("Could not set mouth parameter:", error);
+            }
+  
+            requestAnimationFrame(animateMouth);
+          };
+  
+          animateMouth();
+        }
+    
+        } else {
+          setTimeout(() => {
+            load2dlive()
+          }, 500)
+        }
       }
+      load2dlive()
     };
-    document.body.appendChild(script);
 
-
-    return () => {
-      if (script && document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
   }, []);
   if (!mounted) {
     return null; 
