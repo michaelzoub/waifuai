@@ -295,7 +295,7 @@ export default function Home() {
         <div className={`${opened? "flex w-full h-[500px] md:h-[86%] my- border-[0px] border-black rounded- overflow-hidden bg-[url('/house.png')] bg-cover bg-fixed" : "static flex flex-grow w-full h-[550px] md:h-[90%] my-auto border-[0px] border-black rounded- mx- overflow-hidden bg-white bg-[url('/house.png')] md:bg-cover md:bg-fixed"}`}>
           <div className="flex flex-row justify-between absolute md:w-[100%] w-full font-semibold">
             <div className="m-2 text-white rounded-sm p-2 px-4 bg-red-600 font-semibold h-fit">Live</div>
-            {!noti && <motion.div
+            {noti && <motion.div
               initial={{ y: -100, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -100, opacity: 0 }}
