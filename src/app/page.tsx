@@ -271,14 +271,14 @@ export default function Home() {
             <div className="flex flex-row justify-end text-white gap-2 m-2 text-sm items-center">
               <Link href="https://x.com/asunagpt" className={`py-1 px-4 rounded-sm transition delay-150 ease-in-out ${follow ? "bg-pink-500" : "bg-pink-500"}`} onClick={() => setFollow(true)} target="_blank">♥ Follow</Link>
               <button className="bg-zinc-300 py-1 px-4 rounded-sm ">Donate :)</button>
-              <button className="bg-zinc-300 py-1 px-4 rounded-sm ">★ Subscribe</button>
+              <Link href="https://t.me/asunagpt" className="bg-zinc-300 py-1 px-4 rounded-sm ">★ Telegram</Link>
             </div> 
           </div>
         </div>
       </section>
       <section className={`w-full h-[450px] md:mt-[0px] mt-[-30px] md:h-[100%] pb-4 my-auto z-50 border-l-[0px] md:border-l-[1px] ${opened? " md:w-[20%]" : "md:w-[26%]"} ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-100 md:bg-zinc-50"}`}>
         <div className={`${dark ? "border-y-[1px] border-zinc-600 md:border-y-0 w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-700" : "border-y-[1px] border-zinc-300 md:border-y-0 w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-100"}`}>
-          <div className="animation flex gap-1 text-red-300 whitespace-nowrap my-2 mx-2 p-2" key="donors">DONOS: 
+          <div className={`animation flex gap-1 whitespace-nowrap my-2 mx-2 p-2 ${dark ? "text-white" : "text-black"}`} key="donors">DONOS: 
             {
               donors.map((e:any) => 
                 <div className="flex flex-row gap-1">

@@ -38,7 +38,7 @@
   appearance: none;
   width: 15px; /* Set a specific slider handle width */
   height: 15px; /* Slider handle height */
-  background: pink; /* Green background */
+  background: #ec4899; /* Green background */
   cursor: pointer; /* Cursor on hover */
   border-radius: 100%;
 }
