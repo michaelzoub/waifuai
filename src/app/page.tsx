@@ -18,7 +18,7 @@ import { donors } from "./data/donors";
 
 export default function Home() {
 
-  const prod = "wss://waifuainode-production.up.railway.app/" //"http://localhost:3001"
+  const prod = "wss://waifuainode-production.up.railway.app" //"http://localhost:3001"
 
   const socket = io(prod, {
     reconnection: true, 
