@@ -31,8 +31,8 @@
   -webkit-appearance: none; 
   appearance: none;
   width: 100%; 
-  height: 8px;
-  background: #ededed; 
+  height: 3px;
+  background: #525252; 
   border-radius: 5px; 
   outline: none; 
 }
@@ -42,7 +42,7 @@
   appearance: none;
   width: 15px; /* Set a specific slider handle width */
   height: 15px; /* Slider handle height */
-  background: #ec4899; /* Green background */
+  background: #F472B6; /* Green background */
   cursor: pointer; /* Cursor on hover */
   border-radius: 100%;
 }

@@ -83,8 +83,6 @@ export default function Home() {
 
   useEffect(() => {
 
-    localStorage.setItem("username", "")
-
     const username = localStorage.getItem("username")
     console.log("localstorage username: ", username)
     if (username) {
@@ -121,10 +119,6 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-
-    if (username) {
-      socket.emit("username", username)
-    }
 
     setTimeout(() => {
       setLoading(false)
@@ -215,6 +209,12 @@ export default function Home() {
     }
   }
 
+  function followButtonClick() {
+    if (username) {
+      socket.emit("username", username)
+    }
+  }
+
   useEffect(() => {
     const audio = audioRef.current
     if (play) {
@@ -266,24 +266,26 @@ export default function Home() {
             </div>
           </div>
           </div>
-          <div className={`flex flex-col items-center justify- bg-pink- mt-[0px] rounded-full py-1 gap-0 w-full text-left px- text-xl h-fit ${opened ? "visible" : "hidden"} ${dark ? "border-zinc-500" : ""}`}>
-            <div className="flex flex-row items-center">
-              <div className="text-2xs flex flex-row">
-                <span>{Math.floor(currentTime / 60).toString().padStart(2, "0")}</span> : 
-                <span>{Math.floor(currentTime % 60).toString().padStart(2, "0")}</span>
+          <div className={`flex flex-col items-center justify- bg-pink- mt-[0px] rounded-lg py-1 px-4 gap-0 w-[90%] mx-auto text-left px- text-xl h-fit ${opened ? "visible" : "hidden"} ${dark ? "border-zinc-500 bg-black" : "bg-zinc-300"}`}>
+            <div className="flex flex-col justify-center p-1 px-1 pb-4 w-full">
+              <div className="flex flex-row justify-between items-center">
+                <div className="flex flex-row gap-2 items-center">
+                  <h1 className={`text-xl ${play ? "text-green-500" : "text-red-500"}`}>●</h1>
+                  <h1 className="text-sm">Chill Lofi</h1>
+                </div>
+                <button className="px-2 rounded-md" onClick={() => setPlay((e: boolean) => !e)}>
+                  {
+                    !play?           
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="48">
+                    <path d="M8 5v14l11-7z" fill="currentColor"/>
+                  </svg> : 
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="48">
+                    <rect x="6" y="5" width="4" height="14" fill="currentColor"/>
+                    <rect x="14" y="5" width="4" height="14" fill="currentColor"/>
+                  </svg>
+                  }
+                </button>
               </div>
-              <button className="px-2 rounded-md" onClick={() => setPlay((e: boolean) => !e)}>
-                {
-                  !play?           
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="48">
-                  <path d="M8 5v14l11-7z" fill="currentColor"/>
-                </svg> : 
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="48">
-                  <rect x="6" y="5" width="4" height="14" fill="currentColor"/>
-                  <rect x="14" y="5" width="4" height="14" fill="currentColor"/>
-                </svg>
-                }
-              </button>
               <input type="range" min="0" max={duration} step="0.1" value={currentTime} onChange={handleSliderChange} className="w-[100%] transition-all slider"></input>
             </div>
           </div>
@@ -291,9 +293,38 @@ export default function Home() {
       </section>
       <section className={`relative w-full md:h-[94%]  ${opened ? "h-[200px] md:w-[70%]" : "md:w-[80%] h-[600px]"}`}> {/* used to be h-[500px] */}
         <div className={`${opened? "flex w-full h-[500px] md:h-[86%] my- border-[0px] border-black rounded- overflow-hidden bg-[url('/house.png')] bg-cover bg-fixed" : "static flex flex-grow w-full h-[550px] md:h-[90%] my-auto border-[0px] border-black rounded- mx- overflow-hidden bg-white bg-[url('/house.png')] md:bg-cover md:bg-fixed"}`}>
-          <div className="flex flex-row justify-between absolute md:w-[80%] w-full font-semibold">
+          <div className="flex flex-row justify-between absolute md:w-[100%] w-full font-semibold">
             <div className="m-2 text-white rounded-sm p-2 px-4 bg-red-600 font-semibold">Live</div>
-            <div className={`${noti ? "visible" :"hidden"} text-white bg-pink-500 translate-x-2 transition py-1 px-4 rounded-md ease-in-out delay-150 m-2`}>{noti} just followed!</div>
+            {!noti && <motion.div
+              initial={{ y: -100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -100, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 200, damping: 20 }}
+              className=""
+            >
+              <div className="bg-[#ff69b4] mx-4 mt-4 p-3 rounded-lg shadow-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      viewBox="0 0 24 24" 
+                      fill="#ff69b4" 
+                      className="w-5 h-5"
+                    >
+                      <path d="M7.493 18.75c-.425 0-.82-.236-.975-.632A7.48 7.48 0 016 15.375c0-1.75.599-3.358 1.602-4.634.151-.192.373-.309.6-.397.473-.183.89-.514 1.212-.924a9.042 9.042 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75 2.25 2.25 0 012.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H14.23c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23h-.777zM2.331 10.977a11.969 11.969 0 00-.831 4.398 12 12 0 00.52 3.507c.26.85 1.084 1.368 1.973 1.368H4.9c.445 0 .72-.498.523-.898a8.963 8.963 0 01-.924-3.977c0-1.708.476-3.305 1.302-4.666.245-.403-.028-.959-.5-.959H4.25c-.832 0-1.612.453-1.918 1.227z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-white font-medium text-sm">
+                      New Follower!
+                    </p>
+                    <p className="text-white/80 text-xs">
+                      <span className="text-zinc-700">{noti}</span> just followed
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>}
           </div>
           <div className="relative w-full h-full mt-28 md:0">
             <Live2D />
@@ -319,7 +350,7 @@ export default function Home() {
           </div>
           <div className="flex flex-col items-center">
             <div className="flex flex-row justify-end text-white gap-2 m-2 text-sm items-center">
-              <Link href="https://x.com/asunagpt" className={`py-1 px-4 rounded-sm transition delay-150 ease-in-out ${follow ? "bg-pink-500" : "bg-pink-500"}`} onClick={() => setFollow(true)} target="_blank">♥ Follow</Link>
+              <Link href="https://x.com/asunagpt" className={`py-1 px-4 rounded-sm transition delay-150 ease-in-out ${follow ? "bg-pink-500" : "bg-pink-500"}`} onClick={followButtonClick} target="_blank">♥ Follow</Link>
               <button className="bg-zinc-300 py-1 px-4 rounded-sm ">Donate :)</button>
               <Link href="https://t.me/asunagpt" className="bg-zinc-300 py-1 px-4 rounded-sm ">★ Telegram</Link>
             </div> 
