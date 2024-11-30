@@ -25,7 +25,7 @@ export default function Home() {
     reconnectionAttempts: 5, 
     reconnectionDelay: 1000, 
     reconnectionDelayMax: 5000,
-    timeout: 20000, 
+    //timeout: 20000, 
   });
 
 
@@ -54,6 +54,25 @@ export default function Home() {
   const containerRef: any = useRef(null)
   const audioRef: any = useRef(null)
   const scrollRef:any = useRef(null)
+
+  //connect to websocket
+
+  useEffect(() => {
+    socket.on("message", (msg) => {
+      console.log(messages)
+      console.log("msg: ", msg)
+      setMessages((prev: any[]) => [...(prev || []), msg])
+    })
+
+    socket.on("viewerCount", (viewerers) => {
+      setViewers(viewerers)
+    })
+
+    return () => {
+      socket.off("message")
+      socket.off("viewerCount")
+    }
+  }, [])
 
   useEffect(() => {
 
@@ -89,16 +108,6 @@ export default function Home() {
       setMessages(body.body)
     }
     fetchMessages()
-
-    socket.on("message", (msg) => {
-      console.log(messages)
-      console.log("msg: ", msg)
-      setMessages((prev: any[]) => [...(prev || []), msg])
-    })
-
-    socket.on("viewerCount", (viewerers) => {
-      setViewers(viewerers)
-    })
 
   }, [])
 
