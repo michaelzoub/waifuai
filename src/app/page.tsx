@@ -26,6 +26,7 @@ export default function Home() {
     reconnectionDelay: 1000, 
     reconnectionDelayMax: 5000,
     //timeout: 20000, 
+    transports: ['websocket']
   });
 
 
@@ -194,9 +195,13 @@ export default function Home() {
   }
 
   function handleSliderChange(e:any) {
-    const newTime = e.target.value;
-    setCurrentTime(newTime);
-    audioRef.current.currentTime = newTime;
+    const newSoundVolume = e.target.value
+    setVolume(newSoundVolume);
+  
+    const volumeValue = newSoundVolume / 100;
+    if (audioRef.current) {
+      audioRef.current.volume = volumeValue
+    }
   }
 
   function handleUsername(e: any) {
@@ -277,16 +282,21 @@ export default function Home() {
                   {
                     !play?           
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="48">
-                    <path d="M8 5v14l11-7z" fill="currentColor"/>
-                  </svg> : 
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="48">
-                    <rect x="6" y="5" width="4" height="14" fill="currentColor"/>
-                    <rect x="14" y="5" width="4" height="14" fill="currentColor"/>
+                          <path d="M8 5v14l11-7z" fill="currentColor"/>
+                        </svg> : 
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="48">
+                          <rect x="6" y="5" width="4" height="14" fill="currentColor"/>
+                          <rect x="14" y="5" width="4" height="14" fill="currentColor"/>
+                        </svg>
+                        }
+                      </button>
+                    </div>
+                    <div className="flex flex-row items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                    <path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 001.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06zM18.584 5.106a.75.75 0 011.06 0c3.808 3.807 3.808 9.98 0 13.788a.75.75 0 11-1.06-1.06 8.25 8.25 0 000-11.668.75.75 0 010-1.06z" />
                   </svg>
-                  }
-                </button>
-              </div>
-              <input type="range" min="0" max={duration} step="0.1" value={currentTime} onChange={handleSliderChange} className="w-[100%] transition-all slider"></input>
+                <input type="range" min="0" max="100" step="0.1" value={volume} onChange={(e:any) => setVolume(e.target.value)} className="transition-all slider"></input>
+                </div>
             </div>
           </div>
         </div>
@@ -359,7 +369,7 @@ export default function Home() {
       </section>
       <section className={`w-full h-[450px] md:mt-[0px] mt-[-30px] md:h-[100%] pb-4 my-auto z-50 border-l-[0px] md:border-l-[1px] ${opened? " md:w-[20%]" : "md:w-[20%]"} ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-100 md:bg-zinc-50"}`}>
         <div className={`${dark ? "border-y-[1px] border-zinc-600 md:border-y-0 w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-700" : "border-y-[1px] border-zinc-300 md:border-y-0 w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-100"}`}>
-          <div className={`animation flex gap-1 whitespace-nowrap my-2 mx-2 p-2 ${dark ? "text-white" : "text-black"}`} key="donors">DONOS: 
+          <div className={`animation flex gap-1 whitespace-nowrap my-2 mx-2 p-2 my-auto ${dark ? "text-white" : "text-black"}`} key="donors">DONOS: 
             {
               donors.map((e:any) => 
                 <div className="flex flex-row gap-1">
