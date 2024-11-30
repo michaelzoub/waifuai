@@ -374,7 +374,7 @@ export default function Home() {
           <div className="flex flex-col items-center">
             <div className="flex flex-row justify-end text-white gap-2 m-2 text-sm items-center">
               <Link href="https://x.com/asunagpt" className={`py-1 px-4 rounded-sm transition delay-150 ease-in-out ${follow ? "bg-pink-500" : "bg-pink-500"}`} onClick={followButtonClick} target="_blank">♥ Follow</Link>
-              <button className="bg-zinc-300 py-1 px-4 rounded-sm ">Donate :)</button>
+              <Link href="https://pump.fun/coin/2JDP7KH7ipkJN7KpgBxzD6v726DnFu7q7Pw9DGGGXrfX" className="bg-zinc-300 py-1 px-4 rounded-sm ">BUY $ASU (CA) :)</Link>
               <Link href="https://t.me/asunagpt" className="bg-zinc-300 py-1 px-4 rounded-sm ">★ Telegram</Link>
             </div> 
           </div>
