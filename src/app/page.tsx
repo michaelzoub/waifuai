@@ -110,7 +110,7 @@ export default function Home() {
     if (containerRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight - containerRef.current.clientHeight;
     }
-  }, [messages])
+  }, [messages, username])
 
   useEffect(() => {
     const audio = audioRef.current
