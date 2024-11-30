@@ -65,9 +65,6 @@ export default function Home() {
     setWaifuName(waifuNames[waifuNumber])
     setNameColor(neonColors[colorNumber])
 
-    const randomViewers = Math.floor(Math.random() * 100) * 10
-    setViewers(randomViewers)
-
     async function fetchMessages() {
       console.log("fetchmessage hit")
       const response = await fetch("/api/fetchmessage", {
@@ -87,7 +84,11 @@ export default function Home() {
       console.log(messages)
       console.log("msg: ", msg)
       setMessages((prev: any[]) => [...(prev || []), msg])
-    });
+    })
+
+    socket.on("viewerCount", (viewerers) => {
+      setViewers(viewerers)
+    })
 
   }, [])
 
