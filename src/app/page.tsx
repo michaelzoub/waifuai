@@ -50,6 +50,7 @@ export default function Home() {
   const [currentTime, setCurrentTime] = useState(0); 
   const [username, setUsername] = useState<any>()
   const [newUser, setNewUser] = useState<any>()
+  const [noti, setNoti] = useState("")
 
   const containerRef: any = useRef(null)
   const audioRef: any = useRef(null)
@@ -68,13 +69,21 @@ export default function Home() {
       setViewers(viewerers)
     })
 
+    socket.on("username", (sub) => {
+      setNoti(sub)
+      console.log(sub)
+    })
+
     return () => {
       socket.off("message")
       socket.off("viewerCount")
+      socket.off("username")
     }
   }, [])
 
   useEffect(() => {
+
+    localStorage.setItem("username", "")
 
     const username = localStorage.getItem("username")
     console.log("localstorage username: ", username)
@@ -113,10 +122,17 @@ export default function Home() {
 
   useEffect(() => {
 
+    if (username) {
+      socket.emit("username", username)
+    }
+
     setTimeout(() => {
       setLoading(false)
     }, 1500)
-    if (containerRef.current) {
+    if (!username && containerRef.current) {
+      containerRef.current.scrollTop = 0
+      return
+    } if (containerRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight - containerRef.current.clientHeight;
     }
   }, [messages, username])
@@ -273,10 +289,11 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section className={`w-full md:h-[90%]  ${opened ? "h-[200px] md:w-[70%]" : "md:w-[74%] h-[600px]"}`}> {/* used to be h-[500px] */}
-        <div className={`${opened? "flex w-full h-[500px] md:h-[90%] my- border-[0px] border-black rounded- overflow-hidden bg-[url('/house.png')] bg-cover bg-fixed" : "static flex flex-grow w-full h-[550px] md:h-[86%] my-auto border-[0px] border-black rounded- mx- overflow-hidden bg-white bg-[url('/house.png')] md:bg-cover md:bg-fixed"}`}>
-          <div className="flex flex-row justify- absolute md:w-[64%] w-full font-semibold">
+      <section className={`relative w-full md:h-[94%]  ${opened ? "h-[200px] md:w-[70%]" : "md:w-[80%] h-[600px]"}`}> {/* used to be h-[500px] */}
+        <div className={`${opened? "flex w-full h-[500px] md:h-[86%] my- border-[0px] border-black rounded- overflow-hidden bg-[url('/house.png')] bg-cover bg-fixed" : "static flex flex-grow w-full h-[550px] md:h-[90%] my-auto border-[0px] border-black rounded- mx- overflow-hidden bg-white bg-[url('/house.png')] md:bg-cover md:bg-fixed"}`}>
+          <div className="flex flex-row justify-between absolute md:w-[80%] w-full font-semibold">
             <div className="m-2 text-white rounded-sm p-2 px-4 bg-red-600 font-semibold">Live</div>
+            <div className={`${noti ? "visible" :"hidden"} text-white bg-pink-500 translate-x-2 transition py-1 px-4 rounded-md ease-in-out delay-150 m-2`}>{noti} just followed!</div>
           </div>
           <div className="relative w-full h-full mt-28 md:0">
             <Live2D />
@@ -309,7 +326,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section className={`w-full h-[450px] md:mt-[0px] mt-[-30px] md:h-[100%] pb-4 my-auto z-50 border-l-[0px] md:border-l-[1px] ${opened? " md:w-[20%]" : "md:w-[26%]"} ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-100 md:bg-zinc-50"}`}>
+      <section className={`w-full h-[450px] md:mt-[0px] mt-[-30px] md:h-[100%] pb-4 my-auto z-50 border-l-[0px] md:border-l-[1px] ${opened? " md:w-[20%]" : "md:w-[20%]"} ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-100 md:bg-zinc-50"}`}>
         <div className={`${dark ? "border-y-[1px] border-zinc-600 md:border-y-0 w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-700" : "border-y-[1px] border-zinc-300 md:border-y-0 w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-100"}`}>
           <div className={`animation flex gap-1 whitespace-nowrap my-2 mx-2 p-2 ${dark ? "text-white" : "text-black"}`} key="donors">DONOS: 
             {
@@ -321,24 +338,23 @@ export default function Home() {
             }
           </div>
         </div>
-        <div className={`overflow-y-scroll custom-scrollbar h-[250px] md:h-[82%] w-full px-0 md:px-4`} ref={containerRef} style={{flexDirection: 'column'}}>
+        <div className={`relative ${username ? "overflow-y-scroll" : "overflow-hidden"} overflow-x-hidden custom-scrollbar h-[250px] md:h-[82%] w-full px-0 md:px-4`} ref={containerRef} style={{flexDirection: 'column'}}>
           <div className={`${messages ? "hidden" : "visible mx-auto my-auto"}`}>Loading...</div>
-          <div className={`${username ? "hidden" : "h-full flex flex-col visible h-fit gap-1 justify-center px-2"}`}>
-            <h1 className="font-semibold text-lg">Enter a username to chat:</h1>
+          <div className={`${username ? "hidden" : "absolute left-0 bottom-0 w-full flex flex-col h-full gap-1 items-center backdrop-blur-sm z-50 justify-center px-2"}`}>
+            <h1 className="font-semibold text-lg text-left">Enter a username to chat:</h1>
             <input className={`${dark ? "mx-auto md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-2 bg-zinc-700" : "mx-auto md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-2 bg-zinc-200"}`} placeholder="Username" value={username} onKeyDown={handleUsername} onChange={(e:any) => setNewUser(e.target.value)}></input>
-            <button className="py-1 px-4 rounded-sm transition delay-150 ease-in-out bg-pink-500 my-2 rounded-md text-white" onClick={handleUsername}>Select</button>
-
+            <button className="py-1 px-4 rounded-sm transition delay-150 ease-in-out bg-pink-500 my-2 rounded-md text-white w-full hover:bg-pink-400" onClick={handleUsername}>Select</button>
           </div>
-          <div className={`${username ? "visible" : "hidden"}`}>
+          <div className={`${username ? "visible" : "visible"}`}>
           {messages?.map((e:any) => 
             <div className="flex gap-2 w-full px-4 py-1 m-0 md:m-1 rounded-lg border-[0px] border-black mx-auto break-all overflow-hidden md:mx-0" key={e.timestamp}><div style={{ color: e.color }} className="font-semibold no-wrap whitespace-nowrap">{e.name}:</div> {e.text}</div>
           )}
         </div>
         </div>
-        <div className={`${username ? "visible" : "hidden"} ${dark ? "border-t-[1px] pt-3 border-zinc-500 bg-zinc-900 w-full h-[100px] md:h-[6%] flex flex-row md:flex-col gap-0 md:gap-1 px-2" : "border-t-[1px] pt-3 bg-zinc-50 w-full h-[100px] md:h-[6%] flex flex-row md:flex-col gap-0 md:gap-1 px-2"}`}>
+        <div className={`${username ? "visible" : "visible"} ${dark ? "border-t-[1px] pt-3 border-zinc-500 bg-zinc-900 w-full h-[100px] md:h-[6%] flex flex-row md:flex-col gap-0 md:gap-1 px-2" : "border-t-[1px] pt-3 bg-zinc-50 w-full h-[100px] md:h-[6%] flex flex-row md:flex-col gap-0 md:gap-1 px-2"}`}>
           <div className="w-full flex flex-row items-center items-center justify-end h-full overflow-hidden px-1">
             <input className={`${dark ? "mx-auto md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-2 bg-zinc-700" : "mx-auto md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-2 bg-zinc-200"}`} placeholder="Talk to waifu!" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onKeyDown={sendButton}></input>
-            <div className="absolute justify-end w-fit md:w-fit flex flex-row my-auto overflow-hidden">
+            <div className="absolute justify-end w-fit md:w-fit flex flex-row my-auto overflow-hidden z-0">
               <button className="flex justify-end text-white bg-pink-500 border-[2px] border-pink-400 p-1 px-4 text-xs rounded-md m-1" onClick={sendButton}>↑</button>
             </div>
           </div>
