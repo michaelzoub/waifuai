@@ -45,10 +45,11 @@ export default function Home() {
   const [follow, setFollow] = useState(false)
   const [volume, setVolume] = useState(60)
   const [play, setPlay] = useState(false)
-  const [polling, setPolling] = useState(false)
   const [time, setTime] = useState(0)
   const [duration, setDuration] = useState(0); 
   const [currentTime, setCurrentTime] = useState(0); 
+  const [username, setUsername] = useState<any>()
+  const [newUser, setNewUser] = useState<any>()
 
   const containerRef: any = useRef(null)
   const audioRef: any = useRef(null)
@@ -56,13 +57,22 @@ export default function Home() {
 
   useEffect(() => {
 
+    const username = localStorage.getItem("username")
+    console.log("localstorage username: ", username)
+    if (username) {
+      setUsername(username)
+      setWaifuName(username)
+    } else {
+      console.log("No username")
+    }
+
     if (window.innerWidth <= 768) {
       setOpened(false)
     }
 
     const waifuNumber = Math.floor(Math.random() * 50)
     const colorNumber = Math.floor(Math.random() * 10)
-    setWaifuName(waifuNames[waifuNumber])
+    //setWaifuName(waifuNames[waifuNumber])
     setNameColor(neonColors[colorNumber])
 
     async function fetchMessages() {
@@ -125,7 +135,11 @@ export default function Home() {
     const amountOfCharacters = newMessage.split("")
     console.log(amountOfCharacters.length)
     if (amountOfCharacters.length < 100) {
-      if ((event.key == "Enter" || event.type == "click") && !slurs.some(slur => newMessage.toLowerCase().includes(slur.toLowerCase()))) {
+      if (!username) {
+        return
+      }
+      if ((event.key == "Enter" || event.type == "click")) {
+        if (!slurs.some(slur => newMessage.toLowerCase().includes(slur.toLowerCase()))) {
         setThinking(true)
         socket.emit("message", { text: newMessage, timestamp: Date.now(), name: waifuName, color: nameColor })
         console.log(nameColor)
@@ -153,10 +167,9 @@ export default function Home() {
         setNewMessage("")
         console.log(newMessage)
         console.log(messages)
-  
-      } else {
-        setError("Error")
-        window.alert("No slurs.")
+        } else {
+          window.alert("No slurs")
+        }
       }
       }
   }
@@ -165,6 +178,16 @@ export default function Home() {
     const newTime = e.target.value;
     setCurrentTime(newTime);
     audioRef.current.currentTime = newTime;
+  }
+
+  function handleUsername(e: any) {
+    if (e.type === "click" || e.key === "Enter") {
+      const newUsername = newUser
+      console.log("target value: ", newUsername)
+      setUsername(newUsername)
+      setWaifuName(newUsername)
+      localStorage.setItem("username", newUsername)
+    }
   }
 
   useEffect(() => {
@@ -289,15 +312,23 @@ export default function Home() {
             }
           </div>
         </div>
-        <div className="overflow-y-scroll custom-scrollbar h-[250px] md:h-[82%] w-full px-0 md:px-4" ref={containerRef} style={{flexDirection: 'column'}}>
+        <div className={`overflow-y-scroll custom-scrollbar h-[250px] md:h-[82%] w-full px-0 md:px-4`} ref={containerRef} style={{flexDirection: 'column'}}>
           <div className={`${messages ? "hidden" : "visible mx-auto my-auto"}`}>Loading...</div>
+          <div className={`${username ? "hidden" : "h-full flex flex-col visible h-fit gap-1 justify-center px-2"}`}>
+            <h1 className="font-semibold text-lg">Enter a username to chat:</h1>
+            <input className={`${dark ? "mx-auto md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-2 bg-zinc-700" : "mx-auto md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-2 bg-zinc-200"}`} placeholder="Username" value={username} onKeyDown={handleUsername} onChange={(e:any) => setNewUser(e.target.value)}></input>
+            <button className="py-1 px-4 rounded-sm transition delay-150 ease-in-out bg-pink-500 my-2 rounded-md text-white" onClick={handleUsername}>Select</button>
+
+          </div>
+          <div className={`${username ? "visible" : "hidden"}`}>
           {messages?.map((e:any) => 
             <div className="flex gap-2 w-full px-4 py-1 m-0 md:m-1 rounded-lg border-[0px] border-black mx-auto break-all overflow-hidden md:mx-0" key={e.timestamp}><div style={{ color: e.color }} className="font-semibold no-wrap whitespace-nowrap">{e.name}:</div> {e.text}</div>
           )}
         </div>
+        </div>
         <div className={`${dark ? "border-t-[1px] pt-3 border-zinc-500 bg-zinc-900 w-full h-[100px] md:h-[6%] flex flex-row md:flex-col gap-0 md:gap-1 px-2" : "border-t-[1px] pt-3 bg-zinc-50 w-full h-[100px] md:h-[6%] flex flex-row md:flex-col gap-0 md:gap-1 px-2"}`}>
           <div className="w-full flex flex-row items-center items-center justify-end h-full overflow-hidden px-1">
-            <input className={`${dark ? "mx-auto md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-2 bg-zinc-700" : "mx-auto md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-2 bg-zinc-200"}`} placeholder="Talk to waifu!" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onSubmit={sendButton}></input>
+            <input className={`${username ? "visible" : "hidden"} ${dark ? "mx-auto md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-2 bg-zinc-700" : "mx-auto md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-2 bg-zinc-200"}`} placeholder="Talk to waifu!" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onKeyDown={sendButton}></input>
             <div className="absolute justify-end w-fit md:w-fit flex flex-row my-auto overflow-hidden">
               <button className="flex justify-end text-white bg-pink-500 border-[2px] border-pink-400 p-1 px-4 text-xs rounded-md m-1" onClick={sendButton}>↑</button>
             </div>
