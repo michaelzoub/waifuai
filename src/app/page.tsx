@@ -20,15 +20,7 @@ export default function Home() {
 
   const prod = "wss://waifuainode-production.up.railway.app" //"http://localhost:3001"
 
-  const socket = io(prod, {
-    reconnection: true, 
-    reconnectionAttempts: 5, 
-    reconnectionDelay: 1000, 
-    reconnectionDelayMax: 5000,
-    //timeout: 20000, 
-    transports: ['websocket']
-  });
-
+  let socket: any;
 
   const [messages, setMessages] = useState<any[]>([])
   const [newMessage, setNewMessage] = useState("")
@@ -60,17 +52,27 @@ export default function Home() {
   //connect to websocket
 
   useEffect(() => {
-    socket.on("message", (msg) => {
+
+    socket = io(prod, {
+      reconnection: true, 
+      reconnectionAttempts: 5, 
+      reconnectionDelay: 1000, 
+      reconnectionDelayMax: 5000,
+      //timeout: 20000, 
+      transports: ['websocket']
+    });
+
+    socket.on("message", (msg:any) => {
       console.log(messages)
       console.log("msg: ", msg)
       setMessages((prev: any[]) => [...(prev || []), msg])
     })
 
-    socket.on("viewerCount", (viewerers) => {
+    socket.on("viewerCount", (viewerers:any) => {
       setViewers(viewerers)
     })
 
-    socket.on("username", (sub) => {
+    socket.on("username", (sub:any) => {
       setNoti(sub)
       console.log(sub)
     })
@@ -152,6 +154,14 @@ export default function Home() {
   }, [])
 
   function sendButton(event: any) {
+    socket = io(prod, {
+      reconnection: true, 
+      reconnectionAttempts: 5, 
+      reconnectionDelay: 1000, 
+      reconnectionDelayMax: 5000,
+      //timeout: 20000, 
+      transports: ['websocket']
+    });
     const amountOfCharacters = newMessage.split("")
     console.log(amountOfCharacters.length)
     if (amountOfCharacters.length < 100) {
@@ -368,8 +378,8 @@ export default function Home() {
         </div>
       </section>
       <section className={`w-full h-[450px] md:mt-[0px] mt-[-30px] md:h-[100%] pb-4 my-auto z-50 border-l-[0px] md:border-l-[1px] ${opened? " md:w-[20%]" : "md:w-[20%]"} ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-100 md:bg-zinc-50"}`}>
-        <div className={`${dark ? "border-y-[1px] border-zinc-600 md:border-y-0 w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-700" : "border-y-[1px] border-zinc-300 md:border-y-0 w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-100"}`}>
-          <div className={`animation flex gap-1 whitespace-nowrap my-2 mx-2 p-2 my-auto ${dark ? "text-white" : "text-black"}`} key="donors">DONOS: 
+        <div className={`${dark ? "flex justify-center border-y-[1px] border-zinc-600 md:border-y-0 w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-700" : "flex justify-center border-y-[1px] border-zinc-300 md:border-y-0 w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-100"}`}>
+          <div className={`animation flex gap-1 whitespace-nowrap mx-2 p-2 h-fit my-auto ${dark ? "text-white" : "text-black"}`} key="donors">DONOS: 
             {
               donors.map((e:any) => 
                 <div className="flex flex-row gap-1">
