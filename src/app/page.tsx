@@ -1,6 +1,6 @@
 "use client"
 import Image from "next/image";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import io from "socket.io-client";
 import dynamic from 'next/dynamic'
 import Live2D from "./components/V2";
@@ -19,8 +19,6 @@ import { donors } from "./data/donors";
 export default function Home() {
 
   const prod = "wss://waifuainode-production.up.railway.app" //"http://localhost:3001"
-
-  let socket: any;
 
   const [messages, setMessages] = useState<any[]>([])
   const [newMessage, setNewMessage] = useState("")
@@ -45,15 +43,17 @@ export default function Home() {
   const [newUser, setNewUser] = useState<any>()
   const [noti, setNoti] = useState("")
 
+  const [socket, setSocket] = useState<any>(null);
+
   const containerRef: any = useRef(null)
   const audioRef: any = useRef(null)
   const scrollRef:any = useRef(null)
 
   //connect to websocket
 
-  useEffect(() => {
+  const connectSocket = useCallback(() => {
 
-    socket = io(prod, {
+    const newSocket = io(prod, {
       reconnection: true, 
       reconnectionAttempts: 5, 
       reconnectionDelay: 1000, 
@@ -62,27 +62,34 @@ export default function Home() {
       transports: ['websocket']
     });
 
-    socket.on("message", (msg:any) => {
+    newSocket.on("message", (msg:any) => {
       console.log(messages)
       console.log("msg: ", msg)
       setMessages((prev: any[]) => [...(prev || []), msg])
     })
 
-    socket.on("viewerCount", (viewerers:any) => {
+    newSocket.on("viewerCount", (viewerers:any) => {
       setViewers(viewerers)
     })
 
-    socket.on("username", (sub:any) => {
+    newSocket.on("username", (sub:any) => {
       setNoti(sub)
       console.log(sub)
     })
 
+    setSocket(newSocket)
+
     return () => {
-      socket.off("message")
-      socket.off("viewerCount")
-      socket.off("username")
+      newSocket.off("message")
+      newSocket.off("viewerCount")
+      newSocket.off("username")
     }
   }, [])
+
+  useEffect(() => {
+    const cleanup = connectSocket();
+    return cleanup;
+  }, [connectSocket])
 
   useEffect(() => {
 
@@ -105,6 +112,7 @@ export default function Home() {
     setNameColor(neonColors[colorNumber])
 
     async function fetchMessages() {
+      
       console.log("fetchmessage hit")
       const response = await fetch("/api/fetchmessage", {
         method: "GET",
@@ -154,14 +162,6 @@ export default function Home() {
   }, [])
 
   function sendButton(event: any) {
-    socket = io(prod, {
-      reconnection: true, 
-      reconnectionAttempts: 5, 
-      reconnectionDelay: 1000, 
-      reconnectionDelayMax: 5000,
-      //timeout: 20000, 
-      transports: ['websocket']
-    });
     const amountOfCharacters = newMessage.split("")
     console.log(amountOfCharacters.length)
     if (amountOfCharacters.length < 100) {
