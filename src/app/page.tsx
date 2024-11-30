@@ -74,6 +74,9 @@ export default function Home() {
 
     newSocket.on("username", (sub:any) => {
       setNoti(sub)
+      setTimeout(() => {
+        setNoti("")
+      }, 3000)
       console.log(sub)
     })
 
