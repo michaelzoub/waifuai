@@ -20,11 +20,12 @@ export async function GET() {
         }
         const latestDocuments = await collection
         .find({})
-        .sort({ timestamp: 1 })
+        .sort({ timestamp: -1 })
         .limit(75) 
         .toArray();
         console.log(latestDocuments)
-        return NextResponse.json( { status: 200, body: latestDocuments } )
+        const reversedDocuments = latestDocuments.reverse()
+        return NextResponse.json( { status: 200, body: reversedDocuments } )
     } catch {
         return NextResponse.json( { status: 500, body: "error" } )
     }
