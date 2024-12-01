@@ -17,9 +17,6 @@ export async function GET() {
 
             console.log("Documents to delete:", oldestDocuments);
 
-            await collection.deleteMany({
-                _id: { $in: oldestDocuments.map((doc: any) => doc._id) }
-            });
         }
         const latestDocuments = await collection
         .find({})
