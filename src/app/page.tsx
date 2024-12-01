@@ -182,10 +182,6 @@ const TIME_WINDOW = 60000;
   }
 
   // Check if message limit is exceeded
-  if (messageCount >= MESSAGE_LIMIT) {
-    window.alert(`Please wait. You can send ${MESSAGE_LIMIT} messages per minute.`);
-    return;
-  }
 
     const amountOfCharacters = newMessage.split("")
     console.log(amountOfCharacters.length)
@@ -194,6 +190,11 @@ const TIME_WINDOW = 60000;
       if (!username) {
         return
       }
+
+      if (messageCount >= MESSAGE_LIMIT) {
+        window.alert(`Please wait. You can send ${MESSAGE_LIMIT} messages per minute.`);
+        return;
+      } else {
 
       if (event.key === "Enter" || event.type === "click") {
         if (!slurs.some(slur => newMessage.toLowerCase().includes(slur.toLowerCase()))) {
@@ -233,6 +234,7 @@ const TIME_WINDOW = 60000;
           window.alert("No slurs");
         }
       }
+    }
     }
   }, 5000)
 
