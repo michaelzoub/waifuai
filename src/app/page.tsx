@@ -209,7 +209,6 @@ export default function Home() {
           setNewMessage("");
           console.log(newMessage);
           console.log(messages);
-          setError("Rate limit! Wait 5 seconds.");
         } else {
           window.alert("No slurs");
         }
