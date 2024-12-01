@@ -23,7 +23,7 @@ export async function GET() {
         }
         const latestDocuments = await collection
         .find({})
-        .sort({ timestamp: -1 })
+        .sort({ timestamp: 1 })
         .limit(75) 
         .toArray();
         console.log(latestDocuments)
