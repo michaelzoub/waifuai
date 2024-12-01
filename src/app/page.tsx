@@ -293,7 +293,11 @@ export default function Home() {
 
   async function handleHeartClick(messageId:any) {
     //store in database and use websocket to show to everyone else
+    const isLiked = heartClicked[messageId._id]
+    const newHeartState = !isLiked;
+    setHeartClicked((prev) => ({ ...prev, [messageId._id]: newHeartState }));
     console.log(messageId)
+    if (newHeartState) {
     const response = await fetch("/api/heartclick", {
       method: "POST",
       headers: {
@@ -303,8 +307,18 @@ export default function Home() {
     })
     const returnedAmount = await response.json()
     console.log(returnedAmount)
-    setHeartClicked((prev) => ({...prev, [messageId._id]: !prev[messageId._id],}))
     socket.emit("upvote", returnedAmount.body)
+    } else {
+      const response = await fetch("/api/heartclick", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ messageId: messageId })
+      })
+      const returnedAmount = await response.json()
+      socket.emit("downvote", returnedAmount.body)
+    }
   }
 
   useEffect(() => {
