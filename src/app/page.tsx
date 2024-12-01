@@ -15,6 +15,7 @@ import { darker } from "./components/navbar";
 import { motion } from "framer-motion";
 import { slurs } from "./data/slurs";
 import { donors } from "./data/donors";
+import { throttle } from 'lodash';
 
 export default function Home() {
 
@@ -165,49 +166,56 @@ export default function Home() {
     }, 1000)
   }, [])
 
-  function sendButton(event: any) {
-    const amountOfCharacters = newMessage.split("")
-    console.log(amountOfCharacters.length)
+  const throttledSendButton = throttle((event: any) => {
+    const amountOfCharacters = newMessage.split("");
+    console.log(amountOfCharacters.length);
+
     if (amountOfCharacters.length < 100) {
       if (!username) {
-        return
+        return;
       }
-      if ((event.key == "Enter" || event.type == "click")) {
+
+      if (event.key === "Enter" || event.type === "click") {
         if (!slurs.some(slur => newMessage.toLowerCase().includes(slur.toLowerCase()))) {
-        setThinking(true)
-        socket.emit("message", { text: newMessage, timestamp: Date.now(), name: waifuName, color: nameColor })
-        console.log(nameColor)
-        async function audio() {
-          const response = await fetch("/api/sendtoai", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(newMessage)
-          })
-          const audioBlob = await response.blob();
-          const audioUrl = URL.createObjectURL(audioBlob);
-          const audioPlayer = document.getElementById("audio") as HTMLAudioElement;
-          setLipsync(true)
-          audioPlayer.src = audioUrl;
-          audioPlayer?.play();
-        }
-        audio()
-        setThinking(true)
-        setTimeout(() => {
-          setThinking(false);
-        }, 2000);
-        //setMessages((prev:any) => [...prev, newMessage])
-        setNewMessage("")
-        console.log(newMessage)
-        console.log(messages)
-        setError("Rate limit! Wait 5 seconds.")
+          setThinking(true);
+          socket.emit("message", { text: newMessage, timestamp: Date.now(), name: waifuName, color: nameColor });
+          console.log(nameColor);
+
+          async function audio() {
+            const response = await fetch("/api/sendtoai", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(newMessage)
+            });
+            const audioBlob = await response.blob();
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const audioPlayer = document.getElementById("audio") as HTMLAudioElement;
+            setLipsync(true);
+            audioPlayer.src = audioUrl;
+            audioPlayer?.play();
+          }
+
+          audio();
+          setThinking(true);
+
+          // Reset thinking state after 2 seconds
+          setTimeout(() => {
+            setThinking(false);
+          }, 2000);
+
+          // Reset the message input field
+          setNewMessage("");
+          console.log(newMessage);
+          console.log(messages);
+          setError("Rate limit! Wait 5 seconds.");
         } else {
-          window.alert("No slurs")
+          window.alert("No slurs");
         }
       }
-      }
-  }
+    }
+  }, 5000);
 
   function handleSliderChange(e:any) {
     const newSoundVolume = e.target.value
@@ -409,9 +417,9 @@ export default function Home() {
         </div>
         <div className={`${username ? "visible" : "visible"} ${dark ? "border-t-[1px] pt-3 border-zinc-500 bg-zinc-900 w-full h-[100px] md:h-[6%] flex flex-row md:flex-col gap-0 md:gap-1 px-2" : "border-t-[1px] pt-3 bg-zinc-50 w-full h-[100px] md:h-[6%] flex flex-row md:flex-col gap-0 md:gap-1 px-2"}`}>
           <div className="w-full flex flex-row items-center items-center justify-end h-full overflow-hidden px-1">
-            <input className={`${dark ? "mx-auto md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-2 bg-zinc-700" : "mx-auto md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-2 bg-zinc-200"}`} placeholder="Talk to waifu!" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onKeyDown={sendButton}></input>
+            <input className={`${dark ? "mx-auto md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-2 bg-zinc-700" : "mx-auto md:mx-auto border-[0px] w-full h-fit border-black rounded-md px-2 py-2 bg-zinc-200"}`} placeholder="Talk to waifu!" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onKeyDown={throttledSendButton}></input>
             <div className="absolute justify-end w-fit md:w-fit flex flex-row my-auto overflow-hidden z-0">
-              <button className="flex justify-end text-white bg-pink-500 border-[2px] border-pink-400 p-1 px-4 text-xs rounded-md m-1" onClick={sendButton}>↑</button>
+              <button className="flex justify-end text-white bg-pink-500 border-[2px] border-pink-400 p-1 px-4 text-xs rounded-md m-1" onClick={throttledSendButton}>↑</button>
             </div>
           </div>
         </div>
