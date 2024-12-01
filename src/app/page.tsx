@@ -207,13 +207,13 @@ export default function Home() {
         if (!slurs.some(slur => newMessage.toLowerCase().includes(slur.toLowerCase()))) {
 
           setThinking(true)
-          socket.emit("message", { text: newMessage, timestamp: Date.now(), name: waifuName, color: nameColor })
+          socket.emit("message", { text: newMessage, timestamp: Date.now(), name: waifuName, color: nameColor, type: "" })
           console.log(nameColor);
 
           let returnBotMessage;
           info.forEach((e:any) => {
             if (newMessage.toLowerCase().includes(e.type)) {
-              socket.emit("message", { text: e.response, timestamp: 111, name: "Mod", color: nameColor })
+              socket.emit("message", { text: e.response, timestamp: Date.now(), name: "Mod", color: nameColor, type: "MOD" })
             }
           })
 
@@ -454,7 +454,7 @@ export default function Home() {
           </div>
           <div className={`${username ? "visible" : "visible"}`}>
           {messages?.map((e:any) => 
-            <div className={`flex gap-2 w-full px-4 py-1 m-0 md:m-1 rounded-lg border-[0px] border-black mx-auto break-all overflow-hidden md:mx-0 ${e.timestamp.toString().includes("111") ? "bg-pink-100" : ""}`} key={e.timestamp}><div style={{ color: e.color }} className="font-semibold no-wrap whitespace-nowrap">{e.name}:</div><span className={`${e.timestamp.toString().includes("111") ? "text-red-500 font-semibold" : ""}`}> {e.text}</span></div>
+            <div className={`flex gap-2 w-full px-4 py-1 m-0 md:m-1 rounded-lg border-[0px] border-black mx-auto break-all overflow-hidden md:mx-0 ${e.type ? "bg-pink-100" : ""}`} key={e.timestamp}><div style={{ color: e.color }} className="font-semibold no-wrap whitespace-nowrap">{e.name}:</div><span className={`${e.type ? "text-red-500 font-semibold" : ""}`}> {e.text}</span></div>
           )}
         </div>
         </div>

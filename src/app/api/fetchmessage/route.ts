@@ -5,6 +5,22 @@ export async function GET() {
     try {
         const { db } = await connectToDatabase()
         const collection = db.collection("memecoin.delete after sundays")
+        const totalDocuments = await collection.countDocuments()
+        if (totalDocuments > 500) {
+            const documentsToDelete = totalDocuments - 500;
+
+            const oldestDocuments = await collection
+                .find({})
+                .sort({ timestamp: 1 })  
+                .limit(documentsToDelete)  
+                .toArray();
+
+            console.log("Documents to delete:", oldestDocuments);
+
+            await collection.deleteMany({
+                _id: { $in: oldestDocuments.map((doc: any) => doc._id) }
+            });
+        }
         const latestDocuments = await collection
         .find({})
         .sort({ timestamp: -1 })
