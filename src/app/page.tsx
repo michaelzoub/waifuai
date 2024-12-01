@@ -134,7 +134,7 @@ export default function Home() {
     async function fetchMessages() {
       
       console.log("fetchmessage hit")
-      const response = await fetch("/api/fetchmessage", {
+      const response = await fetch(`/api/fetchmessage?timestamp=${Date.now()}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
