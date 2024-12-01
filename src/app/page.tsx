@@ -19,7 +19,7 @@ import { throttle } from 'lodash';
 
 export default function Home() {
 
-  const prod = "wss://waifuainode-production.up.railway.app" //"http://localhost:3001"
+  const prod = "wss://waifuainode-production.up.railway.app" //"wss://waifuainode-production.up.railway.app"
 
   const [messages, setMessages] = useState<any[]>([])
   const [newMessage, setNewMessage] = useState("")
@@ -43,6 +43,8 @@ export default function Home() {
   const [username, setUsername] = useState<any>()
   const [newUser, setNewUser] = useState<any>()
   const [noti, setNoti] = useState("")
+  const [heartClicked, setHeartClicked] = useState<{ [key: string]: boolean }>({})
+  const [hint, setHint] = useState(true)
 
   const info = [
     {
@@ -95,6 +97,16 @@ export default function Home() {
         setNoti("")
       }, 3000)
       console.log(sub)
+    })
+
+    newSocket.on("upvote", (upvote:any) => {
+      setMessages((prevMessages) => 
+        prevMessages.map((message) => 
+            message._id === upvote._id
+                ? { ...message, upvotes: upvote.upvotes } 
+                : message 
+        )
+    );
     })
 
     setSocket(newSocket)
@@ -207,13 +219,13 @@ export default function Home() {
         if (!slurs.some(slur => newMessage.toLowerCase().includes(slur.toLowerCase()))) {
 
           setThinking(true)
-          socket.emit("message", { text: newMessage, timestamp: Date.now(), name: waifuName, color: nameColor, type: "" })
+          socket.emit("message", { text: newMessage, timestamp: Date.now(), name: waifuName, color: nameColor, type: "", upvotes: 0 })
           console.log(nameColor);
 
           let returnBotMessage;
           info.forEach((e:any) => {
             if (newMessage.toLowerCase().includes(e.type)) {
-              socket.emit("message", { text: e.response, timestamp: Date.now(), name: "Mod", color: nameColor, type: "MOD" })
+              socket.emit("message", { text: e.response, timestamp: Date.now(), name: "Mod", color: nameColor, type: "MOD", upvotes: 0 })
             }
           })
 
@@ -277,6 +289,22 @@ export default function Home() {
     if (username) {
       socket.emit("username", username)
     }
+  }
+
+  async function handleHeartClick(messageId:any) {
+    //store in database and use websocket to show to everyone else
+    console.log(messageId)
+    const response = await fetch("/api/heartclick", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ messageId: messageId })
+    })
+    const returnedAmount = await response.json()
+    console.log(returnedAmount)
+    setHeartClicked((prev) => ({...prev, [messageId._id]: !prev[messageId._id],}))
+    socket.emit("upvote", returnedAmount.body)
   }
 
   useEffect(() => {
@@ -453,9 +481,46 @@ export default function Home() {
             <button className="py-1 px-4 rounded-sm transition delay-150 ease-in-out bg-pink-500 my-2 rounded-md text-white w-full hover:bg-pink-400" onClick={handleUsername}>Select</button>
           </div>
           <div className={`${username ? "visible" : "visible"}`}>
-          {messages?.map((e:any) => 
-            <div className={`flex gap-2 w-full px-4 py-1 m-0 md:m-1 rounded-lg border-[0px] border-black mx-auto break-all overflow-hidden md:mx-0 ${e.type ? "bg-pink-100" : ""}`} key={e.timestamp}><div style={{ color: e.color }} className="font-semibold no-wrap whitespace-nowrap">{e.name}:</div><span className={`${e.type ? "text-red-500 font-semibold" : ""}`}> {e.text}</span></div>
-          )}
+          {messages?.map((e: any) => (
+            <div
+              key={e._id}
+              className={`flex justify-between gap-0 w-full pr-2 pl-1 py-1 m-0 md:m-1 rounded-lg border-[0px] border-black mx-auto break-words overflow-hidden md:mx-0 ${e.type ? "bg-pink-100 break-all" : ""}`}
+            >
+              <div className="flex flex-row gap-2">
+                <div style={{ color: e.color }} className="font-semibold whitespace-nowrap">
+                  {e.name}:
+                </div>
+                
+                <span className={`${e.type ? "text-red-500 font-semibold" : ""}`}>
+                  {e.text}
+                </span>
+              </div>
+
+              <div className={`flex flex-col justify-end items-end m-[1px] mx-1 my-auto ${e.type ? "hidden" : "visible"}`}>
+                <svg
+                  onClick={() => handleHeartClick(e)}
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className="w-4 h-4 cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-110"
+                  style={{
+                    color: heartClicked[e._id] ? 'red' : 'gray',
+                    fill: heartClicked[e._id] ? 'red' : 'transparent',
+                    fillOpacity: heartClicked[e._id] ? 1 : 0.2
+                  }}
+                >
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                </svg>
+                <div className="text-zinc-500 text-2xs mx-auto">{e.upvotes}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className={`flex flex-row p-4 w-full bg-pink-500 rounded-lg mb-2 static text-white justify-between ${hint ? "visible" : "hidden"}`}>
+          <h1 className="w-[85%] break-word">Vote for the best comment!</h1>
+          <button className="text-2xs top-0" onClick={() => setHint(false)}>✖</button>
         </div>
         </div>
         <div className={`${username ? "visible" : "visible"} ${dark ? "border-t-[1px] pt-3 border-zinc-500 bg-zinc-900 w-full h-[100px] md:h-[6%] flex flex-row md:flex-col gap-0 md:gap-1 px-2" : "border-t-[1px] pt-3 bg-zinc-50 w-full h-[100px] md:h-[6%] flex flex-row md:flex-col gap-0 md:gap-1 px-2"}`}>
