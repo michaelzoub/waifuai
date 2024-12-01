@@ -297,6 +297,7 @@ export default function Home() {
     const newHeartState = !isLiked;
     setHeartClicked((prev) => ({ ...prev, [messageId._id]: newHeartState }));
     console.log(messageId)
+    console.log(newHeartState)
     if (newHeartState) {
     const response = await fetch("/api/heartclick", {
       method: "POST",
@@ -309,7 +310,8 @@ export default function Home() {
     console.log(returnedAmount)
     socket.emit("upvote", returnedAmount.body)
     } else {
-      const response = await fetch("/api/heartclick", {
+      messageId.upvotes = messageId.upvotes - 1
+      const response = await fetch("/api/downvote", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
