@@ -174,9 +174,6 @@ export default function Home() {
       }
       if ((event.key == "Enter" || event.type == "click")) {
         if (!slurs.some(slur => newMessage.toLowerCase().includes(slur.toLowerCase()))) {
-          if (rateLimit) {
-            return
-          }
         setThinking(true)
         socket.emit("message", { text: newMessage, timestamp: Date.now(), name: waifuName, color: nameColor })
         console.log(nameColor)
@@ -204,10 +201,6 @@ export default function Home() {
         setNewMessage("")
         console.log(newMessage)
         console.log(messages)
-        setRateLimit(true)
-        setTimeout(() => {
-          setRateLimit(false)
-        }, 5000)
         setError("Rate limit! Wait 5 seconds.")
         } else {
           window.alert("No slurs")
