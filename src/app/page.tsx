@@ -46,15 +46,16 @@ export default function Home() {
 
 
   const [lastMessageTime, setLastMessageTime] = useState(0);
-const [messageCount, setMessageCount] = useState(0);
-const MESSAGE_LIMIT = 5; // Max 5 messages
-const TIME_WINDOW = 60000;
+  const [messageCount, setMessageCount] = useState(0);
+  const MESSAGE_LIMIT = 5 // Max 5 messages
+  const TIME_WINDOW = 60000
 
   const [socket, setSocket] = useState<any>(null);
 
   const containerRef: any = useRef(null)
   const audioRef: any = useRef(null)
   const scrollRef:any = useRef(null)
+  const lastMessageTimeRef = useRef(Date.now())
 
   //connect to websocket
 
@@ -172,17 +173,8 @@ const TIME_WINDOW = 60000;
   }, [])
 
   const throttledSendButton = throttle((event) => {
-
-    const currentTime = Date.now();
+      
   
-  // Reset message count if time window has passed
-  if (currentTime - lastMessageTime > TIME_WINDOW) {
-    setMessageCount(0);
-    setLastMessageTime(currentTime);
-  }
-
-  // Check if message limit is exceeded
-
     const amountOfCharacters = newMessage.split("")
     console.log(amountOfCharacters.length)
 
@@ -191,12 +183,18 @@ const TIME_WINDOW = 60000;
         return
       }
 
-      if (messageCount >= MESSAGE_LIMIT) {
-        window.alert(`Please wait. You can send ${MESSAGE_LIMIT} messages per minute.`);
-        return;
-      } else {
 
       if (event.key === "Enter" || event.type === "click") {
+        const currentTime = Date.now();
+
+        // Update the last message time only if we're not rate-limited
+        if (currentTime - lastMessageTimeRef.current < 8000) {
+          window.alert("RATE LIMIT EXCEEDED. Please wait 8 seconds.");
+          return; // Early exit if rate limit exceeded
+        }
+    
+        // Update the last message time if not rate-limited
+        lastMessageTimeRef.current = currentTime;
         if (!slurs.some(slur => newMessage.toLowerCase().includes(slur.toLowerCase()))) {
           setThinking(true)
           socket.emit("message", { text: newMessage, timestamp: Date.now(), name: waifuName, color: nameColor })
@@ -235,7 +233,7 @@ const TIME_WINDOW = 60000;
         }
       }
     }
-    }
+  
   }, 5000)
 
   function handleSliderChange(e:any) {
