@@ -44,11 +44,20 @@ export default function Home() {
   const [newUser, setNewUser] = useState<any>()
   const [noti, setNoti] = useState("")
 
-
-  const [lastMessageTime, setLastMessageTime] = useState(0);
-  const [messageCount, setMessageCount] = useState(0);
-  const MESSAGE_LIMIT = 5 // Max 5 messages
-  const TIME_WINDOW = 60000
+  const info = [
+    {
+      type: "/telegram",
+      response: "https://t.me/asunagpt"
+    }, 
+    {
+      type: "/twitter",
+      response: "https://x.com/asunagpt"
+    }, 
+    {
+      type: "/ca",
+      response: "2JDP7KH7ipkJN7KpgBxzD6v726DnFu7q7Pw9DGGGXrfX"
+    }
+  ]
 
   const [socket, setSocket] = useState<any>(null);
 
@@ -196,9 +205,17 @@ export default function Home() {
         // Update the last message time if not rate-limited
         lastMessageTimeRef.current = currentTime;
         if (!slurs.some(slur => newMessage.toLowerCase().includes(slur.toLowerCase()))) {
+
           setThinking(true)
           socket.emit("message", { text: newMessage, timestamp: Date.now(), name: waifuName, color: nameColor })
           console.log(nameColor);
+
+          let returnBotMessage;
+          info.forEach((e:any) => {
+            if (newMessage.toLowerCase().includes(e.type)) {
+              socket.emit("message", { text: e.response, timestamp: 111, name: "Mod", color: nameColor })
+            }
+          })
 
           async function audio() {
             const response = await fetch("/api/sendtoai", {
@@ -410,6 +427,13 @@ export default function Home() {
         </div>
       </section>
       <section className={`w-full h-[450px] md:mt-[0px] mt-[-30px] md:h-[100%] pb-4 my-auto z-50 border-l-[0px] md:border-l-[1px] ${opened? " md:w-[20%]" : "md:w-[20%]"} ${dark ? "border-zinc-600 bg-zinc-900" : "border-zinc-300 bg-zinc-100 md:bg-zinc-50"}`}>
+        <div className={`flex justify-center items-center md:hidden`}>
+        <div className="flex flex-row justify-end text-white gap-2 m-2 text-sm items-center">
+              <Link href="https://x.com/asunagpt" className={`py-1 px-4 rounded-sm transition delay-150 ease-in-out ${follow ? "bg-pink-500" : "bg-pink-500"}`} onClick={followButtonClick} target="_blank">♥ Follow</Link>
+              <Link href="https://pump.fun/coin/2JDP7KH7ipkJN7KpgBxzD6v726DnFu7q7Pw9DGGGXrfX" className="bg-zinc-300 py-1 px-4 rounded-sm text-zinc-600">BUY $ASU (CA) :)</Link>
+              <Link href="https://t.me/asunagpt" className="bg-zinc-300 py-1 px-4 rounded-sm text-zinc-600">★ Telegram</Link>
+        </div>
+        </div>
         <div className={`${dark ? "flex justify-center border-y-[1px] border-zinc-600 md:border-y-0 w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-700" : "flex justify-center border-y-[1px] border-zinc-300 md:border-y-0 w-full h-fit md:h-[6%] overflow-hidden font-semibold bg-zinc-100"}`}>
           <div className={`animation flex gap-1 whitespace-nowrap mx-2 p-2 h-fit my-auto ${dark ? "text-white" : "text-black"}`} key="donors">DONOS: 
             {
@@ -430,7 +454,7 @@ export default function Home() {
           </div>
           <div className={`${username ? "visible" : "visible"}`}>
           {messages?.map((e:any) => 
-            <div className="flex gap-2 w-full px-4 py-1 m-0 md:m-1 rounded-lg border-[0px] border-black mx-auto break-all overflow-hidden md:mx-0" key={e.timestamp}><div style={{ color: e.color }} className="font-semibold no-wrap whitespace-nowrap">{e.name}:</div> {e.text}</div>
+            <div className={`flex gap-2 w-full px-4 py-1 m-0 md:m-1 rounded-lg border-[0px] border-black mx-auto break-all overflow-hidden md:mx-0 ${e.timestamp.toString().includes("111") ? "bg-pink-100" : ""}`} key={e.timestamp}><div style={{ color: e.color }} className="font-semibold no-wrap whitespace-nowrap">{e.name}:</div><span className={`${e.timestamp.toString().includes("111") ? "text-red-500 font-semibold" : ""}`}> {e.text}</span></div>
           )}
         </div>
         </div>

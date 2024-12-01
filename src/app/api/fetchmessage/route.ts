@@ -5,9 +5,13 @@ export async function GET() {
     try {
         const { db } = await connectToDatabase()
         const collection = db.collection("memecoin.delete after sundays")
-        const gotten = await collection.find( {} ).toArray()
-        console.log(gotten)
-        return NextResponse.json( { status: 200, body: gotten } )
+        const latestDocuments = await collection
+        .find({})
+        .sort({ timestamp: -1 })
+        .limit(75) 
+        .toArray();
+        console.log(latestDocuments)
+        return NextResponse.json( { status: 200, body: latestDocuments } )
     } catch {
         return NextResponse.json( { status: 500, body: "error" } )
     }
