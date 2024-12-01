@@ -55,7 +55,7 @@ export default function Home() {
   const containerRef: any = useRef(null)
   const audioRef: any = useRef(null)
   const scrollRef:any = useRef(null)
-  const lastMessageTimeRef = useRef(Date.now())
+  const lastMessageTimeRef = useRef<any>()
 
   //connect to websocket
 
