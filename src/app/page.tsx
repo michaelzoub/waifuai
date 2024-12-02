@@ -208,13 +208,12 @@ export default function Home() {
       if (event.key === "Enter" || event.type === "click") {
         const currentTime = Date.now();
 
-        // Update the last message time only if we're not rate-limited
+        //update the last message time only if we're not rate-limited
         if (currentTime - lastMessageTimeRef.current < 8000) {
           window.alert("RATE LIMIT EXCEEDED. Please wait 8 seconds.");
-          return; // Early exit if rate limit exceeded
+          return
         }
     
-        // Update the last message time if not rate-limited
         lastMessageTimeRef.current = currentTime;
         if (!slurs.some(slur => newMessage.toLowerCase().includes(slur.toLowerCase()))) {
 
@@ -229,13 +228,38 @@ export default function Home() {
             }
           })
 
+          async function realTimeData() {
+            const chainId = "solana"
+            const pairId = "C4d2wPEA5uvgEJBsu7USWb4ojLGrRtaAfiLKnSY1HZ4G"
+            const response = await fetch(`https://api.dexscreener.com/latest/dex/pairs/${chainId}/${pairId}`, {
+                method: 'GET',
+                headers: {
+                  
+                },
+            })
+            const data = await response.json()
+            const marketCap = data.pairs[0].marketCap
+            console.log(data)
+            console.log(marketCap)
+            return marketCap
+          }
+
+          let marketCap:any
+
+          console.log(newMessage)
+
           async function audio() {
+
+            if (newMessage.toLowerCase().includes("asu")) {
+              marketCap = await realTimeData()
+            }
+
             const response = await fetch("/api/sendtoai", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json"
               },
-              body: JSON.stringify(newMessage)
+              body: JSON.stringify(`${newMessage} (for Asuna live d4t4: ${marketCap})`)
             });
             const audioBlob = await response.blob();
             const audioUrl = URL.createObjectURL(audioBlob);
