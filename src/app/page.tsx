@@ -115,6 +115,7 @@ export default function Home() {
 
     newSocket.on("asuna", (blob:any) => {
       audioQueue.push(blob)
+      console.log(audioQueue)
       playAudio()
     })
 
@@ -290,7 +291,10 @@ export default function Home() {
             console.log("words: ", hasAsu, hasWord)
 
             if (hasAsu && hasWord) {
-              marketCap = await realTimeData()
+              const receivedData = await realTimeData()
+              marketCap = `(for Asuna live d4t4: ${marketCap})`
+            } else {
+              marketCap = ""
             }
 
             const response = await fetch("/api/sendtoai", {
@@ -298,8 +302,8 @@ export default function Home() {
               headers: {
                 "Content-Type": "application/json"
               },
-              body: JSON.stringify(`${newMessage} (for Asuna live d4t4: ${marketCap})`)
-            });
+              body: JSON.stringify(`${newMessage}${marketCap}`)
+            })
             const audioBlob = await response.blob();
             const audioUrl = URL.createObjectURL(audioBlob);
             const audioPlayer = document.getElementById("audio") as HTMLAudioElement;
