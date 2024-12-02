@@ -111,7 +111,7 @@ export default function Home() {
     );
     })
 
-    const audioQueue: Blob[] = []
+    const audioQueue: any = []
 
     newSocket.on("asuna", (blob:any) => {
       audioQueue.push(blob)
