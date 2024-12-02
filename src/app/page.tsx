@@ -315,6 +315,7 @@ export default function Home() {
             const audioPlayer = document.getElementById("audio") as HTMLAudioElement
             setLipsync(true)
             audioPlayer.src = audioUrl
+            console.log(compressedData.byteLength)
             socket.emit("asuna", compressedData)
             audioPlayer?.play()
           }

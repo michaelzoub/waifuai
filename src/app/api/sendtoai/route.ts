@@ -1,22 +1,43 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendMsgToOpenAI } from "@/app/services/openai";
 import OpenAI from "openai";
+import { ElevenLabsClient } from "elevenlabs";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY, // Load the API key from the environment
   });
 
+  const elevenLabsApi = process.env.ELEVEN_API_KEY
+
   async function toElevenLabs(msgToSend: string) {
-    const options = {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: '{"text":"<string>","model_id":"<string>","language_code":"<string>","voice_settings":{"stability":123,"similarity_boost":123,"style":123,"use_speaker_boost":true},"pronunciation_dictionary_locators":[{"pronunciation_dictionary_id":"<string>","version_id":"<string>"}],"seed":123,"previous_text":"<string>","next_text":"<string>","previous_request_ids":["<string>"],"next_request_ids":["<string>"],"use_pvc_as_ivc":true,"apply_text_normalization":"auto"}'
-    };
-    
-    fetch('https://api.elevenlabs.io/v1/text-to-speech/{voice_id}', options)
-      .then(response => response.json())
-      .then(response => console.log(response))
-      .catch(err => console.error(err));
+    const client = new ElevenLabsClient({ apiKey: elevenLabsApi })
+    const mp3: any = await client.textToSpeech.convert("PZxgznnzx62OVh3FAqVK", {
+      model_id: "eleven_multilingual_v2",
+      text: msgToSend,
+    })
+    if (mp3 instanceof ReadableStream) {
+      const chunks: any = [];
+      const reader = mp3.getReader();
+  
+      // Read the stream and collect chunks
+      const readStream = async () => {
+        const { done, value } = await reader.read();
+        if (done) {
+          // Combine chunks into a single Buffer
+          const buffer = Buffer.concat(chunks);
+          return buffer;
+        }
+  
+        // Push chunk data into the chunks array
+        chunks.push(value);
+        return readStream();
+      };
+  
+      return await readStream();
+    } else {
+      // If mp3 isn't a ReadableStream, you can return it directly
+      return mp3; // or process it as needed
+    }
   }
 
 
@@ -36,7 +57,7 @@ export async function POST(req: NextRequest) {
         const body = await req.json()
         console.log(body)
         const receivedWaifuMsg: any = await sendMsgToOpenAI(body)
-        const voicemsg = await main(receivedWaifuMsg)
+        const voicemsg = await toElevenLabs(receivedWaifuMsg)
         console.log(receivedWaifuMsg)
         console.log(voicemsg)
         return new NextResponse(voicemsg, {
