@@ -17,6 +17,7 @@ import { slurs } from "./data/slurs";
 import { donors } from "./data/donors";
 import { throttle } from 'lodash';
 import { wordsToCheck } from "./data/livedata";
+import pako from "pako"
 
 export default function Home() {
 
@@ -114,7 +115,8 @@ export default function Home() {
     const audioQueue: any = []
 
     newSocket.on("asuna", (receivedData:any) => {
-      const blob = new Blob([receivedData], { type: 'audio/mp3' })
+      const decompressedData = pako.ungzip(receivedData, { to: 'string' })
+      const blob = new Blob([decompressedData], { type: 'audio/mp3' })
       audioQueue.push(blob)
       console.log(audioQueue)
       playAudio()
@@ -310,7 +312,8 @@ export default function Home() {
             const audioPlayer = document.getElementById("audio") as HTMLAudioElement;
             setLipsync(true)
             audioPlayer.src = audioUrl
-            //send to ws: (emits audioBlob so every client can access it)
+            //send to ws: (emits audioBlob so every client can access it) and we also compress it before sending:
+            const compressedData = pako.gzip(audioBlob)
             socket.emit("asuna", audioBlob)
             audioPlayer?.play()
           }
