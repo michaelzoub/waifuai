@@ -113,7 +113,8 @@ export default function Home() {
 
     const audioQueue: any = []
 
-    newSocket.on("asuna", (blob:any) => {
+    newSocket.on("asuna", (receivedData:any) => {
+      const blob = new Blob([receivedData], { type: 'audio/mp3' })
       audioQueue.push(blob)
       console.log(audioQueue)
       playAudio()
