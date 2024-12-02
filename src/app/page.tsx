@@ -47,7 +47,8 @@ export default function Home() {
   const [noti, setNoti] = useState("")
   const [heartClicked, setHeartClicked] = useState<{ [key: string]: boolean }>({})
   const [hint, setHint] = useState(true)
-  const[asunaTalking, setAsunaTalking] = useState(false)
+  const [asunaTalking, setAsunaTalking] = useState(false)
+  const [rateLimit, setRateLimit] = useState(0)
 
   const info = [
     {
@@ -208,7 +209,7 @@ export default function Home() {
       containerRef.current.scrollTop = 0
       return
     } if (containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight - containerRef.current.clientHeight;
+      containerRef.current.scrollTop = containerRef.current.scrollHeight - containerRef.current.clientHeight
     }
   }, [messages, username])
 
@@ -231,6 +232,27 @@ export default function Home() {
     }, 1000)
   }, [])
 
+  useEffect(() => {
+    if (rateLimit > 0) {
+      setHint(true)
+      containerRef.current.scrollTop = containerRef.current.scrollHeight - containerRef.current.clientHeight
+
+      const intervalId = setInterval(() => {
+        setRateLimit((prev) => {
+          if (prev <= 1000) {
+            clearInterval(intervalId)
+            return 0
+          }
+          return prev - 1000
+        });
+      }, 1000)
+
+      return () => clearInterval(intervalId)
+    } else {
+      setHint(false)
+    }
+  }, [rateLimit])
+
   const throttledSendButton = throttle((event) => {
       
   
@@ -247,10 +269,12 @@ export default function Home() {
         const currentTime = Date.now();
 
         //update the last message time only if we're not rate-limited
-        if (currentTime - lastMessageTimeRef.current < 8000) {
-          window.alert("RATE LIMIT EXCEEDED. Please wait 8 seconds.");
+        if (currentTime - lastMessageTimeRef.current < 20000) {
+          setRateLimit(20000)
           return
         }
+
+        setRateLimit(0)
     
         lastMessageTimeRef.current = currentTime;
         if (!slurs.some(slur => newMessage.toLowerCase().includes(slur.toLowerCase()))) {
@@ -610,7 +634,7 @@ export default function Home() {
           ))}
         </div>
         <div className={`flex flex-row p-4 w-full bg-pink-500 rounded-lg mb-2 static text-white justify-between ${hint ? "visible" : "hidden"}`}>
-          <h1 className="w-[85%] break-word">Vote for the best comment!</h1>
+          <h1 className={`w-[85%] break-word ${rateLimit ? "text-xs text-red-200" : ""}`}>{rateLimit !== 0 ? `Rate limit, please wait ${rateLimit / 1000} seconds.` : "Vote for the best comment!"}</h1>
           <button className="text-2xs top-0" onClick={() => setHint(false)}>✖</button>
         </div>
         </div>

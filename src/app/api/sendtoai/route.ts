@@ -16,27 +16,22 @@ const openai = new OpenAI({
       text: msgToSend,
     })
     if (mp3 instanceof ReadableStream) {
-      const chunks: any = [];
-      const reader = mp3.getReader();
-  
-      // Read the stream and collect chunks
+      const chunks: any = []
+      const reader = mp3.getReader()
+
       const readStream = async () => {
-        const { done, value } = await reader.read();
+        const { done, value } = await reader.read()
         if (done) {
-          // Combine chunks into a single Buffer
-          const buffer = Buffer.concat(chunks);
-          return buffer;
+          const buffer = Buffer.concat(chunks)
+          return buffer
         }
-  
-        // Push chunk data into the chunks array
-        chunks.push(value);
-        return readStream();
+        chunks.push(value)
+        return readStream()
       };
   
-      return await readStream();
+      return await readStream()
     } else {
-      // If mp3 isn't a ReadableStream, you can return it directly
-      return mp3; // or process it as needed
+      return mp3
     }
   }
 
