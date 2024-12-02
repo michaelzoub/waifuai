@@ -16,6 +16,7 @@ import { motion } from "framer-motion";
 import { slurs } from "./data/slurs";
 import { donors } from "./data/donors";
 import { throttle } from 'lodash';
+import { wordsToCheck } from "./data/livedata";
 
 export default function Home() {
 
@@ -45,6 +46,7 @@ export default function Home() {
   const [noti, setNoti] = useState("")
   const [heartClicked, setHeartClicked] = useState<{ [key: string]: boolean }>({})
   const [hint, setHint] = useState(true)
+  const[asunaTalking, setAsunaTalking] = useState(false)
 
   const info = [
     {
@@ -108,6 +110,38 @@ export default function Home() {
         )
     );
     })
+
+    const audioQueue: Blob[] = []
+
+    newSocket.on("asuna", (blob:any) => {
+      audioQueue.push(blob)
+      playAudio()
+    })
+
+    function playAudio() {
+      if (asunaTalking || audioQueue.length === 0) {
+        return
+      } else {
+        setAsunaTalking(true)
+        const blob: any = audioQueue.shift()
+        const receivedAudioUrl = URL.createObjectURL(blob)
+        const audioPlayer = document.getElementById("audio") as HTMLAudioElement
+        audioPlayer.src = receivedAudioUrl
+        audioPlayer?.play()
+
+        audioPlayer.onended = () => {
+          URL.revokeObjectURL(receivedAudioUrl)
+          setAsunaTalking(false)
+          playAudio()
+        }
+
+        audioPlayer.onerror = () => {
+          console.error("Error playing audio")
+          setAsunaTalking(false)
+          playAudio()
+        }
+    }
+  }
 
     setSocket(newSocket)
 
@@ -250,7 +284,12 @@ export default function Home() {
 
           async function audio() {
 
-            if (newMessage.toLowerCase().includes("asu")) {
+            //make a system to check every wordsToCheck instead of doing it semi manually
+            const hasAsu = wordsToCheck[0].name.some((word:string) => newMessage.toLowerCase().includes(word))
+            const hasWord = wordsToCheck[0].description.some((word:string) => newMessage.toLowerCase().includes(word))
+            console.log("words: ", hasAsu, hasWord)
+
+            if (hasAsu && hasWord) {
               marketCap = await realTimeData()
             }
 
@@ -264,9 +303,11 @@ export default function Home() {
             const audioBlob = await response.blob();
             const audioUrl = URL.createObjectURL(audioBlob);
             const audioPlayer = document.getElementById("audio") as HTMLAudioElement;
-            setLipsync(true);
-            audioPlayer.src = audioUrl;
-            audioPlayer?.play();
+            setLipsync(true)
+            audioPlayer.src = audioUrl
+            //send to ws: (emits audioBlob so every client can access it)
+            socket.emit("asuna", audioBlob)
+            audioPlayer?.play()
           }
 
           audio();
