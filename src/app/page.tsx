@@ -292,7 +292,7 @@ export default function Home() {
 
             if (hasAsu && hasWord) {
               const receivedData = await realTimeData()
-              marketCap = `(for Asuna live d4t4: ${marketCap})`
+              marketCap = `(for Asuna live d4t4: ${receivedData})`
             } else {
               marketCap = ""
             }
