@@ -115,7 +115,7 @@ export default function Home() {
     const audioQueue: any = []
 
     newSocket.on("asuna", (receivedData:any) => {
-      const decompressedData = pako.ungzip(receivedData, { to: 'string' })
+      const decompressedData = pako.ungzip(receivedData)
       const blob = new Blob([decompressedData], { type: 'audio/mp3' })
       audioQueue.push(blob)
       console.log(audioQueue)
@@ -307,14 +307,15 @@ export default function Home() {
               },
               body: JSON.stringify(`${newMessage}${marketCap}`)
             })
-            const audioBlob = await response.blob();
-            const audioUrl = URL.createObjectURL(audioBlob);
-            const audioPlayer = document.getElementById("audio") as HTMLAudioElement;
+            const audioBlob = await response.blob()
+            const arrayBuffer = await audioBlob.arrayBuffer()
+            const uint8Array = new Uint8Array(arrayBuffer)
+            const compressedData = pako.gzip(uint8Array)
+            const audioUrl = URL.createObjectURL(audioBlob)
+            const audioPlayer = document.getElementById("audio") as HTMLAudioElement
             setLipsync(true)
             audioPlayer.src = audioUrl
-            //send to ws: (emits audioBlob so every client can access it) and we also compress it before sending:
-            const compressedData = pako.gzip(audioBlob)
-            socket.emit("asuna", audioBlob)
+            socket.emit("asuna", compressedData)
             audioPlayer?.play()
           }
 
